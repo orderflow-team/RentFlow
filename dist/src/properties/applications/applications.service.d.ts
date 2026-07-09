@@ -15,9 +15,9 @@ export declare class ApplicationsService {
         isSmoker?: boolean;
     }): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.ApplicationStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.ApplicationStatus;
         companyId: string;
         propertyId: string;
         unitId: string | null;
@@ -52,9 +52,9 @@ export declare class ApplicationsService {
         status: ApplicationStatus;
     }): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.ApplicationStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.ApplicationStatus;
         companyId: string;
         propertyId: string;
         unitId: string | null;

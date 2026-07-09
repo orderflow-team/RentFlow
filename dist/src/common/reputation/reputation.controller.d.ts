@@ -39,11 +39,11 @@ export declare class ReputationController {
         isPublic: boolean;
     }): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
         phone: string | null;
         status: import("@prisma/client").$Enums.TenantStatus;
+        createdAt: Date;
+        updatedAt: Date;
         deletedAt: Date | null;
         firstName: string;
         lastName: string;
@@ -58,11 +58,11 @@ export declare class ReputationController {
         isReputationPublic: boolean;
     } | {
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         email: string;
         phone: string | null;
         status: import("@prisma/client").$Enums.OwnerStatus;
+        createdAt: Date;
+        updatedAt: Date;
         deletedAt: Date | null;
         firstName: string;
         lastName: string;

@@ -95,10 +95,10 @@ export declare class LeasesService {
         } & {
             id: string;
             name: string;
-            createdAt: Date;
-            updatedAt: Date;
             status: import("@prisma/client").$Enums.UnitStatus;
             metadata: import("@prisma/client/runtime/client").JsonValue | null;
+            createdAt: Date;
+            updatedAt: Date;
             deletedAt: Date | null;
             companyId: string;
             description: string | null;

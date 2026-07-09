@@ -13,9 +13,9 @@ export declare class OwnerPortalService {
         } & {
             id: string;
             name: string;
+            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             createdAt: Date;
             updatedAt: Date;
-            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             deletedAt: Date | null;
             companyId: string;
             description: string | null;
@@ -28,17 +28,16 @@ export declare class OwnerPortalService {
         })[];
     } & {
         id: string;
-        type: import("@prisma/client").$Enums.PropertyType;
         name: string;
-        createdAt: Date;
-        updatedAt: Date;
         address: string;
         status: import("@prisma/client").$Enums.PropertyStatus;
         metadata: import("@prisma/client/runtime/client").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
         deletedAt: Date | null;
+        type: import("@prisma/client").$Enums.PropertyType;
         companyId: string;
         description: string | null;
-        notes: string | null;
         city: string;
         state: string;
         zipCode: string;
@@ -47,12 +46,13 @@ export declare class OwnerPortalService {
         yearBuilt: number | null;
         amenities: import("@prisma/client/runtime/client").JsonValue | null;
         images: import("@prisma/client/runtime/client").JsonValue | null;
+        createdById: string | null;
+        updatedById: string | null;
+        notes: string | null;
         latitude: number | null;
         longitude: number | null;
         ownerId: string | null;
         managerId: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         expectedAvailability: Date | null;
         prefFamily: boolean;
         prefMarried: boolean;

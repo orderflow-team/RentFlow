@@ -18,10 +18,10 @@ export declare class TenantPortalController {
         } & {
             id: string;
             name: string;
-            createdAt: Date;
-            updatedAt: Date;
             status: import("@prisma/client").$Enums.UnitStatus;
             metadata: import("@prisma/client/runtime/client").JsonValue | null;
+            createdAt: Date;
+            updatedAt: Date;
             deletedAt: Date | null;
             companyId: string;
             description: string | null;
@@ -52,9 +52,9 @@ export declare class TenantPortalController {
         } | null;
     } & {
         id: string;
+        status: import("@prisma/client").$Enums.LeaseStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.LeaseStatus;
         deletedAt: Date | null;
         companyId: string;
         notes: string | null;
@@ -89,9 +89,9 @@ export declare class TenantPortalController {
         }[];
     } & {
         id: string;
+        status: import("@prisma/client").$Enums.InvoiceStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.InvoiceStatus;
         deletedAt: Date | null;
         companyId: string;
         notes: string | null;
@@ -120,14 +120,14 @@ export declare class TenantPortalController {
         } | null;
     } & {
         id: string;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.MaintenanceStatus;
         deletedAt: Date | null;
         companyId: string;
         description: string | null;
-        notes: string | null;
         images: import("@prisma/client/runtime/client").JsonValue | null;
+        notes: string | null;
         unitId: string | null;
         tenantId: string | null;
         category: import("@prisma/client").$Enums.TicketCategory;
@@ -148,14 +148,14 @@ export declare class TenantPortalController {
         unitId?: string;
     }): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.MaintenanceStatus;
         deletedAt: Date | null;
         companyId: string;
         description: string | null;
-        notes: string | null;
         images: import("@prisma/client/runtime/client").JsonValue | null;
+        notes: string | null;
         unitId: string | null;
         tenantId: string | null;
         category: import("@prisma/client").$Enums.TicketCategory;

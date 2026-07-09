@@ -38,9 +38,9 @@ export declare class DiscoveryController {
     }[]>;
     joinWaitlist(user: JwtPayload, id: string): Promise<{
         id: string;
+        status: import("@prisma/client").$Enums.ApplicationStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.ApplicationStatus;
         companyId: string;
         propertyId: string;
         unitId: string | null;

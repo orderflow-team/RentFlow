@@ -133,8 +133,8 @@ export declare class PropertiesController {
         };
         history: {
             id: string;
-            createdAt: Date;
             metadata: import("@prisma/client/runtime/client").JsonValue | null;
+            createdAt: Date;
             description: string;
             propertyId: string;
             eventType: string;
