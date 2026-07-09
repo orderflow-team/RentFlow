@@ -34,12 +34,8 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
-const adapter_pg_1 = require("@prisma/adapter-pg");
 const bcrypt = __importStar(require("bcryptjs"));
-const adapter = new adapter_pg_1.PrismaPg({
-    connectionString: process.env.DATABASE_URL,
-});
-const prisma = new client_1.PrismaClient({ adapter });
+const prisma = new client_1.PrismaClient();
 async function main() {
     console.log('🌱 Seeding RentFlow database (Indian Localized)...\n');
     console.log('🧹 Cleaning existing data...');
