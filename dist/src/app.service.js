@@ -875,65 +875,72 @@ let AppService = AppService_1 = class AppService {
     .demo-creds strong{color:#18181b}
     @media(min-width:768px){.brand-side{display:flex}}
     .glass-card{
-      background:rgba(24,24,27,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      border:1px solid rgba(255,255,255,0.08);border-radius:16px;
-      padding:1.5rem;width:100%;max-width:360px;margin-bottom:2rem;
-      box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:0 auto}
+    .glass-card-main{
+      background:rgba(30,30,36,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.06);border-radius:20px;
+      padding:1.75rem;box-shadow:0 30px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
+      position:relative;z-index:2
     }
-    .gc-header{font-size:.85rem;font-weight:600;color:#d4d4d8;margin-bottom:1.25rem}
-    .gc-stats{display:flex;justify-content:space-between;margin-bottom:1.5rem}
-    .gc-stat .val{font-size:1.25rem;font-weight:700;color:#fafafa;line-height:1}
-    .gc-stat .lbl{font-size:.75rem;color:#a1a1aa;margin-top:.25rem}
-    .gc-graph{height:60px;width:100%;margin-bottom:1.5rem}
-    .gc-graph svg{width:100%;height:100%}
-    .gc-item{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-    .gc-item:last-child{margin-bottom:0}
-    .gc-icon{
-      width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,0.05);font-size:.8rem;font-weight:700
+    .gc-header{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;letter-spacing:.05em;color:#a1a1aa;text-transform:uppercase;margin-bottom:1.5rem}
+    .gc-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 10px #10b981}
+    .gc-stats{display:flex;gap:2.5rem;margin-bottom:2rem}
+    .gc-stat .val{font-size:1.6rem;font-weight:700;color:#ffffff;line-height:1.2}
+    .gc-stat .lbl{font-size:.8rem;color:#a1a1aa;margin-top:.25rem}
+    .gc-bars{display:flex;align-items:flex-end;gap:.5rem;height:60px;width:100%}
+    .gc-bar{flex:1;background:linear-gradient(180deg,#6366f1 0%,rgba(99,102,241,0.2) 100%);border-radius:4px;opacity:0.7;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)}
+    .gc-bar:nth-child(1){height:30%}
+    .gc-bar:nth-child(2){height:45%}
+    .gc-bar:nth-child(3){height:35%}
+    .gc-bar:nth-child(4){height:60%}
+    .gc-bar:nth-child(5){height:50%}
+    .gc-bar.active{height:90%;opacity:1;background:linear-gradient(180deg,#a855f7 0%,#6366f1 100%);box-shadow:0 0 20px rgba(168,85,247,0.4),inset 0 1px 0 rgba(255,255,255,0.4)}
+    .gc-bar:nth-child(7){height:65%}
+    .float-pill{
+      position:absolute;background:rgba(30,30,36,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.08);border-radius:100px;
+      padding:.6rem 1.2rem;display:flex;align-items:center;gap:.6rem;
+      font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:3
     }
-    .gc-icon.green{color:#34d399;background:rgba(52,211,153,0.1)}
-    .gc-icon.red{color:#f87171;background:rgba(248,113,113,0.1)}
-    .g-title{font-size:.8rem;font-weight:500;color:#e4e4e7}
-    .g-sub{font-size:.7rem;color:#71717a}
-    .g-amt{font-size:.85rem;font-weight:600;margin-left:auto;color:#fafafa}
-    .g-amt.green{color:#34d399}
+    .float-pill.left{bottom:-20px;left:-20px}
+    .float-pill.right{bottom:-80px;right:-20px}
   </style>
 </head>
 <body>
 <div class="check-grid-bg"><div class="check-grid-glow"></div></div>
 <div class="page-wrap">
-  <div class="brand-side">
-    <div class="logo">RentFlow</div>
-    <div>
-      <div class="glass-card">
-        <div class="gc-header">Portfolio overview</div>
+  <div class="brand-side" style="justify-content:center">
+    <div class="graphic-wrapper">
+      <div class="glass-card-main">
+        <div class="gc-header">
+          <div class="gc-dot"></div>
+          PORTFOLIO OVERVIEW
+        </div>
         <div class="gc-stats">
           <div class="gc-stat"><div class="val">94%</div><div class="lbl">Occupancy</div></div>
-          <div class="gc-stat"><div class="val">8.2L</div><div class="lbl">Collected</div></div>
+          <div class="gc-stat"><div class="val">₹8.2L</div><div class="lbl">Collected</div></div>
           <div class="gc-stat"><div class="val">212</div><div class="lbl">Units</div></div>
         </div>
-        <div class="gc-graph">
-          <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-            <path d="M0,40 C20,35 30,10 50,15 C70,20 80,5 100,0 L100,40 L0,40 Z" fill="rgba(99,102,241,0.2)"/>
-            <path d="M0,40 C20,35 30,10 50,15 C70,20 80,5 100,0" fill="none" stroke="#6366f1" stroke-width="2"/>
-          </svg>
-        </div>
-        <div class="gc-recent">
-          <div class="gc-item">
-            <div class="gc-icon green">↓</div>
-            <div><div class="g-title">Rent received &middot; Unit 4B</div><div class="g-sub">Today, 10:23 AM</div></div>
-            <div class="g-amt green">+$1,200</div>
-          </div>
-          <div class="gc-item">
-            <div class="gc-icon red">↑</div>
-            <div><div class="g-title">Maintenance &middot; Unit 2A</div><div class="g-sub">Yesterday, 3:45 PM</div></div>
-            <div class="g-amt">-$150</div>
-          </div>
+        <div class="gc-bars">
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar active"></div>
+          <div class="gc-bar"></div>
         </div>
       </div>
-      <div class="quote">"RentFlow brought everything together. We finally have a single source of truth for our entire portfolio."</div>
-      <div class="author">— Portfolio manager, 200+ units</div>
+      
+      <div class="float-pill left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Rent received — Unit 4B
+      </div>
+      
+      <div class="float-pill right">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fb923c" stroke="#fb923c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        Maintenance resolved in 2 days
+      </div>
     </div>
   </div>
   <div class="form-side">
@@ -1232,44 +1239,73 @@ let AppService = AppService_1 = class AppService {
     .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.35rem}
     @keyframes spin{to{transform:rotate(360deg)}}
     @media(min-width:768px){.brand-side{display:flex}}
-    .glass-card{
-      background:rgba(24,24,27,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      border:1px solid rgba(255,255,255,0.08);border-radius:16px;
-      padding:1.5rem;width:100%;max-width:360px;margin-bottom:2rem;
-      box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:0 auto}
+    .glass-card-main{
+      background:rgba(30,30,36,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.06);border-radius:20px;
+      padding:1.75rem;box-shadow:0 30px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
+      position:relative;z-index:2
     }
-    .gc-header{font-size:.85rem;font-weight:600;color:#d4d4d8;margin-bottom:1.25rem}
-    .gc-stats{display:flex;justify-content:space-between;margin-bottom:1.5rem}
-    .gc-stat .val{font-size:1.25rem;font-weight:700;color:#fafafa;line-height:1}
-    .gc-stat .lbl{font-size:.75rem;color:#a1a1aa;margin-top:.25rem}
-    .gc-graph{height:60px;width:100%;margin-bottom:1.5rem}
-    .gc-graph svg{width:100%;height:100%}
-    .gc-item{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-    .gc-item:last-child{margin-bottom:0}
-    .gc-icon{
-      width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,0.05);font-size:.8rem;font-weight:700
+    .gc-header{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;letter-spacing:.05em;color:#a1a1aa;text-transform:uppercase;margin-bottom:1.5rem}
+    .gc-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 10px #10b981}
+    .gc-stats{display:flex;gap:2.5rem;margin-bottom:2rem}
+    .gc-stat .val{font-size:1.6rem;font-weight:700;color:#ffffff;line-height:1.2}
+    .gc-stat .lbl{font-size:.8rem;color:#a1a1aa;margin-top:.25rem}
+    .gc-bars{display:flex;align-items:flex-end;gap:.5rem;height:60px;width:100%}
+    .gc-bar{flex:1;background:linear-gradient(180deg,#6366f1 0%,rgba(99,102,241,0.2) 100%);border-radius:4px;opacity:0.7;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)}
+    .gc-bar:nth-child(1){height:30%}
+    .gc-bar:nth-child(2){height:45%}
+    .gc-bar:nth-child(3){height:35%}
+    .gc-bar:nth-child(4){height:60%}
+    .gc-bar:nth-child(5){height:50%}
+    .gc-bar.active{height:90%;opacity:1;background:linear-gradient(180deg,#a855f7 0%,#6366f1 100%);box-shadow:0 0 20px rgba(168,85,247,0.4),inset 0 1px 0 rgba(255,255,255,0.4)}
+    .gc-bar:nth-child(7){height:65%}
+    .float-pill{
+      position:absolute;background:rgba(30,30,36,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,0.08);border-radius:100px;
+      padding:.6rem 1.2rem;display:flex;align-items:center;gap:.6rem;
+      font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:3
     }
-    .gc-icon.green{color:#34d399;background:rgba(52,211,153,0.1)}
-    .gc-icon.red{color:#f87171;background:rgba(248,113,113,0.1)}
-    .g-title{font-size:.8rem;font-weight:500;color:#e4e4e7}
-    .g-sub{font-size:.7rem;color:#71717a}
-    .g-amt{font-size:.85rem;font-weight:600;margin-left:auto;color:#fafafa}
-    .g-amt.green{color:#34d399}
+    .float-pill.left{bottom:-20px;left:-20px}
+    .float-pill.right{bottom:-80px;right:-20px}
   </style>
 </head>
 <body>
+<div class="check-grid-bg"><div class="check-grid-glow"></div></div>
 <div class="page-wrap">
-  <div class="brand-side">
-    <div class="logo">RentFlow</div>
-    <ul class="features">
-      <li>Property &amp; building management</li>
-      <li>Digital lease contracts</li>
-      <li>Automated rent collection</li>
-      <li>Maintenance request tracking</li>
-      <li>Real-time reports &amp; analytics</li>
-      <li>Team access with role control</li>
-    </ul>
+  <div class="brand-side" style="justify-content:center">
+    <div class="graphic-wrapper">
+      <div class="glass-card-main">
+        <div class="gc-header">
+          <div class="gc-dot"></div>
+          PORTFOLIO OVERVIEW
+        </div>
+        <div class="gc-stats">
+          <div class="gc-stat"><div class="val">94%</div><div class="lbl">Occupancy</div></div>
+          <div class="gc-stat"><div class="val">₹8.2L</div><div class="lbl">Collected</div></div>
+          <div class="gc-stat"><div class="val">212</div><div class="lbl">Units</div></div>
+        </div>
+        <div class="gc-bars">
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar"></div>
+          <div class="gc-bar active"></div>
+          <div class="gc-bar"></div>
+        </div>
+      </div>
+      
+      <div class="float-pill left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Rent received — Unit 4B
+      </div>
+      
+      <div class="float-pill right">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fb923c" stroke="#fb923c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        Maintenance resolved in 2 days
+      </div>
+    </div>
   </div>
   <div class="form-side">
     <div class="form-wrap">
