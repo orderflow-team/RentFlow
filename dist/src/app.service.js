@@ -874,35 +874,35 @@ let AppService = AppService_1 = class AppService {
     }
     .demo-creds strong{color:#18181b}
     @media(min-width:768px){.brand-side{display:flex}}
-    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:2rem auto}
+    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:2rem auto;padding-bottom:90px}
     .glass-card-main{
-      background:rgba(30,30,36,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      border:1px solid rgba(255,255,255,0.06);border-radius:20px;
-      padding:1.75rem;box-shadow:0 30px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+      border:1px solid rgba(255,255,255,0.08);border-radius:24px;
+      padding:1.75rem;box-shadow:0 30px 60px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.1);
       position:relative;z-index:2
     }
-    .gc-header{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;letter-spacing:.05em;color:#a1a1aa;text-transform:uppercase;margin-bottom:1.5rem}
-    .gc-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 10px #10b981}
-    .gc-stats{display:flex;gap:2.5rem;margin-bottom:2rem}
-    .gc-stat .val{font-size:1.6rem;font-weight:700;color:#ffffff;line-height:1.2}
+    .gc-header{display:flex;align-items:center;gap:.6rem;font-size:.75rem;font-weight:700;letter-spacing:.08em;color:#a1a1aa;text-transform:uppercase;margin-bottom:1.75rem}
+    .gc-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 10px #10b981;flex-shrink:0}
+    .gc-stats{display:flex;gap:2.75rem;margin-bottom:2.25rem}
+    .gc-stat .val{font-size:1.75rem;font-weight:700;color:#ffffff;line-height:1.2;letter-spacing:-0.01em}
     .gc-stat .lbl{font-size:.8rem;color:#a1a1aa;margin-top:.25rem}
-    .gc-bars{display:flex;align-items:flex-end;gap:.5rem;height:60px;width:100%}
-    .gc-bar{flex:1;background:linear-gradient(180deg,#6366f1 0%,rgba(99,102,241,0.2) 100%);border-radius:4px;opacity:0.7;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)}
-    .gc-bar:nth-child(1){height:30%}
-    .gc-bar:nth-child(2){height:45%}
-    .gc-bar:nth-child(3){height:35%}
-    .gc-bar:nth-child(4){height:60%}
-    .gc-bar:nth-child(5){height:50%}
-    .gc-bar.active{height:90%;opacity:1;background:linear-gradient(180deg,#a855f7 0%,#6366f1 100%);box-shadow:0 0 20px rgba(168,85,247,0.4),inset 0 1px 0 rgba(255,255,255,0.4)}
-    .gc-bar:nth-child(7){height:65%}
+    .gc-bars{display:flex;align-items:flex-end;gap:.55rem;height:64px;width:100%}
+    .gc-bar{flex:1;background:linear-gradient(180deg,#6366f1 0%,rgba(99,102,241,0.15) 100%);border-radius:6px 6px 0 0;opacity:0.75;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1)}
+    .gc-bar:nth-child(1){height:25%}
+    .gc-bar:nth-child(2){height:40%}
+    .gc-bar:nth-child(3){height:30%}
+    .gc-bar:nth-child(4){height:55%}
+    .gc-bar:nth-child(5){height:45%}
+    .gc-bar.active{height:85%;opacity:1;background:linear-gradient(180deg,#a855f7 0%,#6366f1 100%);box-shadow:0 0 25px rgba(168,85,247,0.5),inset 0 1px 0 rgba(255,255,255,0.3)}
+    .gc-bar:nth-child(7){height:60%}
     .float-pill{
-      position:absolute;background:rgba(30,30,36,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      position:absolute;background:rgba(255,255,255,0.03);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
       border:1px solid rgba(255,255,255,0.08);border-radius:100px;
-      padding:.6rem 1.2rem;display:flex;align-items:center;gap:.6rem;
-      font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:3
+      padding:.7rem 1.4rem;display:flex;align-items:center;gap:.6rem;
+      font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 15px 35px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.1);z-index:3
     }
-    .float-pill.left{bottom:-20px;left:-20px}
-    .float-pill.right{bottom:-60px;right:-20px}
+    .float-pill.left{bottom:25px;left:-30px}
+    .float-pill.right{bottom:-35px;right:-10px}
     .top-logo {
       display: flex;
       align-items: center;
@@ -1363,35 +1363,35 @@ let AppService = AppService_1 = class AppService {
     .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.35rem}
     @keyframes spin{to{transform:rotate(360deg)}}
     @media(min-width:768px){.brand-side{display:flex}}
-    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:2rem auto}
+    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:2rem auto;padding-bottom:90px}
     .glass-card-main{
-      background:rgba(30,30,36,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      border:1px solid rgba(255,255,255,0.06);border-radius:20px;
-      padding:1.75rem;box-shadow:0 30px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+      border:1px solid rgba(255,255,255,0.08);border-radius:24px;
+      padding:1.75rem;box-shadow:0 30px 60px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.1);
       position:relative;z-index:2
     }
-    .gc-header{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;letter-spacing:.05em;color:#a1a1aa;text-transform:uppercase;margin-bottom:1.5rem}
-    .gc-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 10px #10b981}
-    .gc-stats{display:flex;gap:2.5rem;margin-bottom:2rem}
-    .gc-stat .val{font-size:1.6rem;font-weight:700;color:#ffffff;line-height:1.2}
+    .gc-header{display:flex;align-items:center;gap:.6rem;font-size:.75rem;font-weight:700;letter-spacing:.08em;color:#a1a1aa;text-transform:uppercase;margin-bottom:1.75rem}
+    .gc-dot{width:8px;height:8px;background:#10b981;border-radius:50%;box-shadow:0 0 10px #10b981;flex-shrink:0}
+    .gc-stats{display:flex;gap:2.75rem;margin-bottom:2.25rem}
+    .gc-stat .val{font-size:1.75rem;font-weight:700;color:#ffffff;line-height:1.2;letter-spacing:-0.01em}
     .gc-stat .lbl{font-size:.8rem;color:#a1a1aa;margin-top:.25rem}
-    .gc-bars{display:flex;align-items:flex-end;gap:.5rem;height:60px;width:100%}
-    .gc-bar{flex:1;background:linear-gradient(180deg,#6366f1 0%,rgba(99,102,241,0.2) 100%);border-radius:4px;opacity:0.7;box-shadow:inset 0 1px 0 rgba(255,255,255,0.2)}
-    .gc-bar:nth-child(1){height:30%}
-    .gc-bar:nth-child(2){height:45%}
-    .gc-bar:nth-child(3){height:35%}
-    .gc-bar:nth-child(4){height:60%}
-    .gc-bar:nth-child(5){height:50%}
-    .gc-bar.active{height:90%;opacity:1;background:linear-gradient(180deg,#a855f7 0%,#6366f1 100%);box-shadow:0 0 20px rgba(168,85,247,0.4),inset 0 1px 0 rgba(255,255,255,0.4)}
-    .gc-bar:nth-child(7){height:65%}
+    .gc-bars{display:flex;align-items:flex-end;gap:.55rem;height:64px;width:100%}
+    .gc-bar{flex:1;background:linear-gradient(180deg,#6366f1 0%,rgba(99,102,241,0.15) 100%);border-radius:6px 6px 0 0;opacity:0.75;box-shadow:inset 0 1px 0 rgba(255,255,255,0.1)}
+    .gc-bar:nth-child(1){height:25%}
+    .gc-bar:nth-child(2){height:40%}
+    .gc-bar:nth-child(3){height:30%}
+    .gc-bar:nth-child(4){height:55%}
+    .gc-bar:nth-child(5){height:45%}
+    .gc-bar.active{height:85%;opacity:1;background:linear-gradient(180deg,#a855f7 0%,#6366f1 100%);box-shadow:0 0 25px rgba(168,85,247,0.5),inset 0 1px 0 rgba(255,255,255,0.3)}
+    .gc-bar:nth-child(7){height:60%}
     .float-pill{
-      position:absolute;background:rgba(30,30,36,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      position:absolute;background:rgba(255,255,255,0.03);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
       border:1px solid rgba(255,255,255,0.08);border-radius:100px;
-      padding:.6rem 1.2rem;display:flex;align-items:center;gap:.6rem;
-      font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:3
+      padding:.7rem 1.4rem;display:flex;align-items:center;gap:.6rem;
+      font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 15px 35px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.1);z-index:3
     }
-    .float-pill.left{bottom:-20px;left:-20px}
-    .float-pill.right{bottom:-60px;right:-20px}
+    .float-pill.left{bottom:25px;left:-30px}
+    .float-pill.right{bottom:-35px;right:-10px}
     .top-logo {
       display: flex;
       align-items: center;
