@@ -46,56 +46,52 @@ export class AuthService {
     // Hash password
     const passwordHash = await bcrypt.hash(dto.password, 12);
 
-    // Create company and user in a transaction
-    const result = await this.prisma.$transaction(async (tx) => {
-      // Create company
-      const company = await tx.company.create({
-        data: {
-          name: dto.companyName,
-          slug: dto.companyName
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '') +
-            '-' +
-            Math.random().toString(36).substring(2, 8),
-          status: 'ACTIVE',
-        },
-      });
-
-      // Get ADMIN role
-      const adminRole = await tx.role.findUnique({
-        where: { type: RoleType.ADMIN },
-      });
-
-      if (!adminRole) {
-        throw new BadRequestException('System roles not initialized. Run seed first.');
-      }
-
-      // Create user
-      const user = await tx.user.create({
-        data: {
-          email: dto.email,
-          passwordHash,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          phone: dto.phone,
-          status: 'ACTIVE',
-          isOwner: true,
-          companyId: company.id,
-        },
-      });
-
-      // Assign ADMIN role
-      await tx.userRole.create({
-        data: {
-          userId: user.id,
-          roleId: adminRole.id,
-          companyId: company.id,
-        },
-      });
-
-      return { company, user };
+    // Create company and user sequentially
+    // (We avoid interactive transactions here due to Vercel/adapter-pg serverless issues)
+    
+    const adminRole = await this.prisma.role.findUnique({
+      where: { type: RoleType.ADMIN },
     });
+
+    if (!adminRole) {
+      throw new BadRequestException('System roles not initialized. Run seed first.');
+    }
+
+    const company = await this.prisma.company.create({
+      data: {
+        name: dto.companyName,
+        slug: dto.companyName
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '') +
+          '-' +
+          Math.random().toString(36).substring(2, 8),
+        status: 'ACTIVE',
+      },
+    });
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        passwordHash,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+        status: 'ACTIVE',
+        isOwner: true,
+        companyId: company.id,
+      },
+    });
+
+    await this.prisma.userRole.create({
+      data: {
+        userId: user.id,
+        roleId: adminRole.id,
+        companyId: company.id,
+      },
+    });
+
+    const result = { company, user };
 
     // Generate tokens
     const tokens = await this.generateTokens(result.user.id, result.user.email, result.company.id);
