@@ -1,7 +1,15 @@
 import { PrismaClient, Tenant, Unit } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import * as bcrypt from 'bcryptjs';
+import { Pool } from 'pg';
+import 'dotenv/config';
 
-const prisma = new PrismaClient();
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+const adapter = new PrismaPg(pool as any);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('🌱 Seeding RentFlow database (Indian Localized)...\n');
