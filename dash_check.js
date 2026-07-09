@@ -9,6 +9,25 @@
 
   function h(s) { return String(s).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
+  // Auto-label table cells with their column header so the mobile CSS can
+  // render each row as a card (label: value) instead of a scrolling table.
+  function applyTableLabels(root) {
+    (root || document).querySelectorAll('.table-wrap table').forEach(function(table) {
+      var headers = Array.from(table.querySelectorAll('thead th')).map(function(th) { return th.textContent.trim(); });
+      if (!headers.length) return;
+      table.querySelectorAll('tbody tr').forEach(function(tr) {
+        Array.from(tr.children).forEach(function(td, i) {
+          if (headers[i] && !td.hasAttribute('data-label')) td.setAttribute('data-label', headers[i]);
+        });
+      });
+    });
+  }
+  var mainContentEl = document.getElementById('mainContent');
+  if (mainContentEl && window.MutationObserver) {
+    var tableObserver = new MutationObserver(function() { applyTableLabels(mainContentEl); });
+    tableObserver.observe(mainContentEl, { childList: true, subtree: true });
+  }
+
     function closeModal() {
     var el = document.querySelector('.modal-overlay.open');
     if (el) el.remove();
@@ -32,6 +51,9 @@
         break;
       case 'add-building':
         openBuildingModal(el.getAttribute('data-prop-id'));
+        break;
+      case 'assign-manager':
+        openAssignManagerModal(el.getAttribute('data-prop-id'));
         break;
       case 'add-unit':
         openUnitModal(el.getAttribute('data-building-id'));
@@ -100,11 +122,23 @@
     var navEl = document.querySelector('.nav-item[data-view="' + view + '"]');
     if (navEl) navEl.classList.add('active');
     renderView(view);
+    if (window.innerWidth <= 768) toggleSidebar(false);
+  }
+
+  window.toggleSidebar = function(force) {
+    var sidebar = document.getElementById('sidebar');
+    var backdrop = document.getElementById('sidebarBackdrop');
+    var menuBtn = document.getElementById('menuBtn');
+    var open = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', open);
+    if (backdrop) backdrop.classList.toggle('open', open);
+    if (menuBtn) menuBtn.classList.toggle('open', open);
   }
 
   function renderView(view) {
     switch(view) {
       case 'dashboard': renderDashboard(); break;
+      case 'explore': renderExplore(); break;
       case 'properties': renderProperties(); break;
       case 'tenants': renderTenants(); break;
       case 'leases': renderLeases(); break;
@@ -119,34 +153,95 @@
     document.getElementById('mainContent').innerHTML = html;
   }
 
+  function animateNum(el, target, opts) {
+    if (!el) return;
+    opts = opts || {};
+    var prefix = opts.prefix || '', suffix = opts.suffix || '';
+    var duration = 700, startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var current = target * eased;
+      var display = opts.decimals ? current.toFixed(opts.decimals) : Math.round(current);
+      el.textContent = prefix + (opts.locale ? Number(display).toLocaleString() : display) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   /* ── Init ─────────────────────────────────────────────── */
+  function roleLabel(r) {
+    return r === 'ADMIN' ? 'Admin' : r === 'MANAGER' ? 'Manager' : r === 'ACCOUNTANT' ? 'Accountant' : r === 'OWNER' ? 'Owner' : r === 'TENANT' ? 'Tenant' : r;
+  }
+
+  function activateRole(role, allRoles) {
+    roleTypes = [role];
+    document.getElementById('sidebarRole').textContent = roleLabel(role);
+    document.getElementById('navItems').style.display = '';
+    var switchLink = document.getElementById('switchRoleLink');
+    if (switchLink) switchLink.style.display = allRoles.length > 1 ? '' : 'none';
+
+    var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER' || r === 'ACCOUNTANT'; });
+    var isTenant = roleTypes.includes('TENANT');
+    var isOwner = roleTypes.includes('OWNER');
+
+    // Show/hide nav items based on role
+    document.getElementById('navMaintenance').style.display = (isStaff || isOwner) ? '' : 'none';
+    document.getElementById('navVendors').style.display = (isStaff && (roleTypes.includes('ADMIN') || roleTypes.includes('MANAGER'))) ? '' : 'none';
+    document.getElementById('navExplore').style.display = isTenant ? '' : 'none';
+
+    // For non-staff users, hide irrelevant nav items
+    if (!isStaff) {
+      document.querySelectorAll('.nav-item[data-view="properties"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+      document.querySelectorAll('.nav-item[data-view="tenants"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+      document.querySelectorAll('.nav-item[data-view="leases"]').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelectorAll('.nav-item[data-view="finance"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+    }
+
+    renderDashboard();
+  }
+
+  function renderRoleSwitcher(allRoles) {
+    document.getElementById('navItems').style.display = 'none';
+    document.getElementById('sidebarRole').textContent = 'Choose a role';
+    var cards = allRoles.map(function(r) {
+      return '<div class="card" style="cursor:pointer;text-align:center;padding:1.5rem" onclick="chooseRole(\\'' + r + '\\')"><h4 style="margin-bottom:.35rem">' + roleLabel(r) + '</h4><p style="font-size:.8rem;color:#71717a">Continue as ' + roleLabel(r) + '</p></div>';
+    }).join('');
+    setContent(
+      '<div class="page-header"><h2>Choose how to continue</h2><p>Your account has multiple roles. Pick one to enter its dashboard.</p></div>' +
+      '<div class="card-grid">' + cards + '</div>'
+    );
+  }
+
+  window.chooseRole = function(role) {
+    localStorage.setItem('activeRole', role);
+    window.location.reload();
+  };
+
+  window.switchRole = function() {
+    localStorage.removeItem('activeRole');
+    window.location.reload();
+  };
+
   async function init() {
     try {
       var res = await api('/auth/profile');
       if (!res.ok) throw new Error('Unauthorized');
       userData = res.data;
       document.getElementById('sidebarEmail').textContent = userData.email;
-      roleTypes = (userData.roles || []).map(function(r) { return typeof r === 'string' ? r : (r.type || r.name); });
-      var displayRole = roleTypes.includes('ADMIN') ? 'Admin' : roleTypes.includes('MANAGER') ? 'Manager' : roleTypes.includes('ACCOUNTANT') ? 'Accountant' : roleTypes.includes('OWNER') ? 'Owner' : roleTypes.includes('TENANT') ? 'Tenant' : roleTypes[0] || 'User';
-      document.getElementById('sidebarRole').textContent = displayRole;
+      var allRoles = (userData.roles || []).map(function(r) { return typeof r === 'string' ? r : (r.type || r.name); });
 
-      var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER' || r === 'ACCOUNTANT'; });
-      var isTenant = roleTypes.includes('TENANT');
-      var isOwner = roleTypes.includes('OWNER');
-
-      // Show/hide nav items based on role
-      document.getElementById('navMaintenance').style.display = isStaff ? '' : 'none';
-      document.getElementById('navVendors').style.display = (isStaff && (roleTypes.includes('ADMIN') || roleTypes.includes('MANAGER'))) ? '' : 'none';
-
-      // For non-staff users, hide irrelevant nav items
-      if (!isStaff) {
-        document.querySelectorAll('.nav-item[data-view="properties"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
-        document.querySelectorAll('.nav-item[data-view="tenants"]').forEach(function(el) { el.style.display = 'none'; });
-        document.querySelectorAll('.nav-item[data-view="leases"]').forEach(function(el) { el.style.display = 'none'; });
-        document.querySelectorAll('.nav-item[data-view="finance"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+      if (allRoles.length > 1) {
+        var stored = localStorage.getItem('activeRole');
+        if (stored && allRoles.indexOf(stored) !== -1) {
+          activateRole(stored, allRoles);
+        } else {
+          renderRoleSwitcher(allRoles);
+        }
+      } else {
+        activateRole(allRoles[0], allRoles);
       }
-
-      renderDashboard();
     } catch(e) {
       setContent('<div class="loading"><p style="font-size:.85rem;color:#71717a">Could not load dashboard. <a href="/login" style="color:#18181b;font-weight:500">Sign in again.</a></p></div>');
     }
@@ -201,12 +296,18 @@
           var occ = s.occupancy || {};
           var fin = s.financial || {};
           if (cards.length >= 6) {
-            cards[0].innerHTML = '<div class="stat-num">' + (occ.totalUnits || 0) + '</div><div class="stat-lbl">Total Units</div><div class="stat-sub">Across portfolio</div>';
-            cards[1].innerHTML = '<div class="stat-num">' + (occ.occupiedUnits || 0) + '</div><div class="stat-lbl">Occupied</div><div class="stat-sub"><span class="good">' + ((occ.occupancyRate || 0)).toFixed(1) + '%</span> rate</div>';
-            cards[2].innerHTML = '<div class="stat-num">' + (occ.vacantUnits || 0) + '</div><div class="stat-lbl">Vacant</div><div class="stat-sub">Available</div>';
-            cards[3].innerHTML = '<div class="stat-num">' + (occ.maintenanceUnits || 0) + '</div><div class="stat-lbl">Maintenance</div><div class="stat-sub">Under repair</div>';
-            cards[4].innerHTML = '<div class="stat-num">₹' + ((fin.totalCollected || 0)).toLocaleString() + '</div><div class="stat-lbl">Collected</div><div class="stat-sub">Revenue</div>';
-            cards[5].innerHTML = '<div class="stat-num">' + ((occ.occupancyRate || 0)) + '%</div><div class="stat-lbl">Occupancy Rate</div><div class="stat-sub">' + (occ.occupiedUnits || 0) + ' of ' + (occ.totalUnits || 0) + ' rented</div>';
+            cards[0].innerHTML = '<div class="stat-num">0</div><div class="stat-lbl">Total Units</div><div class="stat-sub">Across portfolio</div>';
+            cards[1].innerHTML = '<div class="stat-num">0</div><div class="stat-lbl">Occupied</div><div class="stat-sub"><span class="good">' + ((occ.occupancyRate || 0)).toFixed(1) + '%</span> rate</div>';
+            cards[2].innerHTML = '<div class="stat-num">0</div><div class="stat-lbl">Vacant</div><div class="stat-sub">Available</div>';
+            cards[3].innerHTML = '<div class="stat-num">0</div><div class="stat-lbl">Maintenance</div><div class="stat-sub">Under repair</div>';
+            cards[4].innerHTML = '<div class="stat-num">₹0</div><div class="stat-lbl">Collected</div><div class="stat-sub">Revenue</div>';
+            cards[5].innerHTML = '<div class="stat-num">0%</div><div class="stat-lbl">Occupancy Rate</div><div class="stat-sub">' + (occ.occupiedUnits || 0) + ' of ' + (occ.totalUnits || 0) + ' rented</div>';
+            animateNum(cards[0].querySelector('.stat-num'), occ.totalUnits || 0, {});
+            animateNum(cards[1].querySelector('.stat-num'), occ.occupiedUnits || 0, {});
+            animateNum(cards[2].querySelector('.stat-num'), occ.vacantUnits || 0, {});
+            animateNum(cards[3].querySelector('.stat-num'), occ.maintenanceUnits || 0, {});
+            animateNum(cards[4].querySelector('.stat-num'), fin.totalCollected || 0, { prefix: '₹', locale: true });
+            animateNum(cards[5].querySelector('.stat-num'), occ.occupancyRate || 0, { suffix: '%' });
           }
         }
       }
@@ -230,16 +331,102 @@
     if (el) el.innerHTML = activityHtml;
   }
 
+  /* ── Explore Properties (Tenant discovery) ────────────────── */
+  window.renderExplore = async function() {
+    setContent(
+      '<div class="page-header"><h2>Explore Properties</h2><p>Search available properties and contact the manager directly</p></div>' +
+      '<div class="filter-bar">' +
+      '<input id="exLocation" placeholder="City, state, or address..." style="min-width:180px">' +
+      '<input id="exMinBudget" type="number" placeholder="Min rent ₹" style="width:120px">' +
+      '<input id="exMaxBudget" type="number" placeholder="Max rent ₹" style="width:120px">' +
+      '<select id="exType"><option value="">Any type</option><option value="APARTMENT_COMPLEX">Apartment Complex</option><option value="SINGLE_FAMILY">Single Family</option><option value="MULTI_FAMILY">Multi Family</option><option value="COMMERCIAL">Commercial</option><option value="MIXED_USE">Mixed Use</option></select>' +
+      '<label style="display:flex;align-items:center;gap:.35rem;font-size:.82rem;color:#52525b"><input type="checkbox" id="exAvailSoon"> Available Soon only</label>' +
+      '<button class="btn btn-primary btn-sm" onclick="searchExplore()">Search</button>' +
+      '</div>' +
+      '<div class="card-grid" id="exploreList"><div class="loading" style="padding:2rem"><div class="pulse"></div></div></div>');
+
+    window.searchExplore();
+  };
+
+  window.searchExplore = async function() {
+    var listEl = document.getElementById('exploreList');
+    listEl.innerHTML = '<div class="loading" style="padding:2rem"><div class="pulse"></div></div>';
+
+    var params = [];
+    var location = document.getElementById('exLocation').value.trim();
+    var minBudget = document.getElementById('exMinBudget').value;
+    var maxBudget = document.getElementById('exMaxBudget').value;
+    var type = document.getElementById('exType').value;
+    var availSoon = document.getElementById('exAvailSoon').checked;
+    if (location) params.push('location=' + encodeURIComponent(location));
+    if (minBudget) params.push('minBudget=' + encodeURIComponent(minBudget));
+    if (maxBudget) params.push('maxBudget=' + encodeURIComponent(maxBudget));
+    if (type) params.push('type=' + encodeURIComponent(type));
+    if (availSoon) params.push('isAvailableSoon=true');
+
+    try {
+      var res = await api('/discovery/search' + (params.length ? '?' + params.join('&') : ''));
+      if (res.ok && res.data && res.data.length) {
+        var cards = res.data.map(function(p) {
+          var rent = p.rentRange ? ('₹' + p.rentRange.min.toLocaleString() + (p.rentRange.max !== p.rentRange.min ? ' – ₹' + p.rentRange.max.toLocaleString() : '')) : 'Rent on request';
+          var statusTag = p.status === 'AVAILABLE_SOON' ? '<span class="tag tag-yellow">Available Soon</span>' : '<span class="tag tag-green">Active</span>';
+          var managerHtml = p.manager
+            ? '<div style="margin-top:.5rem;padding-top:.5rem;border-top:1px solid #e4e4e7;font-size:.8rem"><strong>Contact manager:</strong> ' + h(p.manager.name) + (p.manager.phone ? ' · ' + h(p.manager.phone) : '') + '</div>'
+            : '<div style="margin-top:.5rem;padding-top:.5rem;border-top:1px solid #e4e4e7;font-size:.8rem;color:#a1a1aa">No manager assigned yet</div>';
+          var waitlistBtn = p.status === 'AVAILABLE_SOON'
+            ? '<button class="btn btn-secondary btn-sm" style="margin-top:.5rem" onclick="joinWaitlist(\\'' + p.id + '\\')">Join Waiting List</button>'
+            : '';
+          return '<div class="card">' +
+            '<div class="card-hd"><div class="card-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><h4>' + h(p.name) + '</h4></div>' +
+            '<p>' + h(p.address || '') + ', ' + h(p.city || '') + '</p>' +
+            '<div class="meta">' + rent + ' · ' + statusTag + '</div>' +
+            managerHtml + waitlistBtn +
+            '</div>';
+        }).join('');
+        listEl.innerHTML = cards;
+      } else {
+        listEl.innerHTML = '<div class="empty-state"><p>No properties match your search.</p></div>';
+      }
+    } catch(e) { listEl.innerHTML = '<div class="empty-state"><p>Could not load properties.</p></div>'; }
+  };
+
+  window.joinWaitlist = async function(propertyId) {
+    try {
+      var res = await api('/discovery/properties/' + propertyId + '/waitlist', { method: 'POST' });
+      if (res.ok) { toast('Added to waiting list', 'success'); }
+      else { toast(res.data.message || 'Failed to join waiting list', 'error'); }
+    } catch(e) { toast('Failed to join waiting list', 'error'); }
+  };
+
   /* ── Tenant Portal ─────────────────────────────────────── */
   async function renderTenantPortal() {
     var name = (userData.firstName || '').split(' ')[0];
     setContent(
       '<div class="page-header"><h2>Welcome, ' + h(name) + '.</h2><p>Your rental portal</p></div>' +
-      '<div class="section-h">Your lease</div><div class="card-grid" id="tpLease"><div class="card" style="text-align:center;color:#a1a1aa;font-size:.82rem">Loading...</div></div>' +
-      '<div class="section-h">Invoices</div><div class="table-wrap" id="tpInvoices"><div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">Loading...</div></div>' +
-      '<div class="section-h">Maintenance requests</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem" id="tpTopGrid">' +
+        '<div class="tp-col"><h3>Your lease</h3><div class="card-grid" id="tpLease"><div class="card" style="text-align:center;color:#a1a1aa;font-size:.82rem">Loading...</div></div></div>' +
+        '<div class="tp-col"><h3>Lease Checklists</h3><div class="card" id="tpLifecycle" style="font-size:.8rem;color:#71717a">Loading...</div></div>' +
+      '</div>' +
+      '<div class="section-h">Invoices / Bills</div>' +
+      '<div class="filter-bar">' +
+      '<select id="tpInvCategoryFilter"><option value="">All Categories</option><option value="RENT">Rent</option><option value="UTILITY">Utility Bills</option><option value="MAINTENANCE">Maintenance</option><option value="TAX">Corporation Tax</option><option value="OTHER">Other Charges</option></select>' +
+      '<select id="tpInvStatusFilter"><option value="">All Statuses</option><option value="PAID">Paid</option><option value="PENDING">Pending</option><option value="OVERDUE">Overdue</option></select>' +
+      '</div>' +
+      '<div class="table-wrap" id="tpInvoices"><div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">Loading...</div></div>' +
+      '<div class="section-h">Support & Maintenance requests</div>' +
+      '<div class="filter-bar">' +
+      '<select id="tpMaintCategoryFilter"><option value="">All Types</option><option value="MAINTENANCE">Maintenance & Repairs</option><option value="QUERY">Queries & Support</option></select>' +
+      '</div>' +
       '<div class="table-wrap" id="tpMaintenance"><div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">Loading...</div></div>' +
-      '<button class="btn btn-primary btn-sm" onclick="openMaintModal()">+ Submit request</button>');
+      '<button class="btn btn-primary btn-sm" onclick="openMaintModal()">+ Submit request</button>' +
+      '<div class="section-h">My Documents</div>' +
+      '<div class="table-wrap" id="tpDocuments"><div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">Loading...</div></div>' +
+      '<button class="btn btn-primary btn-sm" onclick="openDocumentModal()">+ Add document</button>');
+
+    // Bind event listeners for dynamic filters
+    document.getElementById('tpInvCategoryFilter').addEventListener('change', filterTenantInvoices);
+    document.getElementById('tpInvStatusFilter').addEventListener('change', filterTenantInvoices);
+    document.getElementById('tpMaintCategoryFilter').addEventListener('change', filterTenantMaint);
 
     try {
       var leaseRes = await api('/tenants/me/lease');
@@ -248,41 +435,170 @@
         var un = l.unit ? (l.unit.name || '—') : '—';
         var bn = l.unit && l.unit.building ? l.unit.building.name : '';
         var pn = l.unit && l.unit.building && l.unit.building.property ? l.unit.building.property.name : '';
-        document.getElementById('tpLease').innerHTML = '<div class="card"><h4>Unit ' + h(un) + '</h4><p>' + h(bn) + (bn && pn ? ' · ' : '') + h(pn) + '</p><div class="meta">Rent: <strong>₹' + (l.rentAmount || 0).toLocaleString() + '</strong> · ' + new Date(l.startDate).toLocaleDateString() + ' — ' + (l.endDate ? new Date(l.endDate).toLocaleDateString() : 'Open') + '</div></div>';
+        document.getElementById('tpLease').innerHTML = '<div class="card"><div class="card-hd"><div class="card-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h4>Unit ' + h(un) + '</h4></div><p>' + h(bn) + (bn && pn ? ' · ' : '') + h(pn) + '</p><div class="meta">Rent: <strong>₹' + (l.rentAmount || 0).toLocaleString() + '</strong> · ' + new Date(l.startDate).toLocaleDateString() + ' — ' + (l.endDate ? new Date(l.endDate).toLocaleDateString() : 'Open') + '</div></div>';
+        
+        // Render Checklist
+        if (l.leaseLifecycle) {
+          var lf = l.leaseLifecycle;
+          var getChStatus = function(val) { return val ? '<span style="color:#16a34a;font-weight:600">✓ Done</span>' : '<span style="color:#ca8a04;font-weight:600">⏳ Pending</span>'; };
+          document.getElementById('tpLifecycle').innerHTML = 
+            '<div style="display:grid;grid-template-columns:1fr;gap:.4rem">' +
+            '<div><strong>Agreement Signed:</strong> ' + getChStatus(lf.moveInAgreementSigned) + '</div>' +
+            '<div><strong>Deposit Received:</strong> ' + getChStatus(lf.moveInDepositReceived) + '</div>' +
+            '<div><strong>KYC Completed:</strong> ' + getChStatus(lf.moveInKycCompleted) + '</div>' +
+            '<div><strong>Move-in Photos:</strong> ' + getChStatus(lf.moveInPhotosUploaded) + '</div>' +
+            '<div><strong>Key Handover:</strong> ' + getChStatus(lf.moveInKeyHandover) + '</div>' +
+            '<hr style="border:0;border-top:1px solid #e4e4e7;margin:.25rem 0">' +
+            '<div><strong>Exit Inspection:</strong> ' + getChStatus(lf.moveOutInspection) + '</div>' +
+            '<div><strong>Key Return:</strong> ' + getChStatus(lf.moveOutKeyReturn) + '</div>' +
+            '</div>';
+        } else {
+          document.getElementById('tpLifecycle').innerHTML = '<p style="padding:.5rem">No checklist tracking found.</p>';
+        }
       }
-    } catch(e) { document.getElementById('tpLease').innerHTML = '<div class="card" style="text-align:center;color:#a1a1aa;font-size:.82rem">No active lease.</div>'; }
+    } catch(e) { 
+      document.getElementById('tpLease').innerHTML = '<div class="card" style="text-align:center;color:#a1a1aa;font-size:.82rem">No active lease.</div>';
+      document.getElementById('tpLifecycle').innerHTML = '<p style="padding:.5rem">No active lease checklist.</p>';
+    }
 
     try {
       var invRes = await api('/tenants/me/invoices');
-      if (invRes.ok && invRes.data && invRes.data.length) {
-        var rows = invRes.data.map(function(i) {
-          var st = i.status === 'PAID' ? 'tag-green' : i.status === 'OVERDUE' ? 'tag-red' : 'tag-yellow';
-          return '<tr><td>' + h(i.invoiceNumber) + '</td><td><span class="val">₹' + (i.totalAmount || 0).toLocaleString() + '</span></td><td><span class="val">₹' + (i.paidAmount || 0).toLocaleString() + '</span></td><td><span class="tag ' + st + '">' + (i.status || '—') + '</span></td><td>' + new Date(i.dueDate).toLocaleDateString() + '</td></tr>';
-        }).join('');
-        document.getElementById('tpInvoices').innerHTML = '<table><thead><tr><th>Invoice</th><th>Total</th><th>Paid</th><th>Status</th><th>Due</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      if (invRes.ok) {
+        window.tenantInvoices = invRes.data || [];
+        filterTenantInvoices();
       }
     } catch(e) { document.getElementById('tpInvoices').innerHTML = '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">No invoices.</div>'; }
 
     try {
       var maintRes = await api('/tenants/me/maintenance');
-      if (maintRes.ok && maintRes.data && maintRes.data.length) {
-        var rows = maintRes.data.map(function(r) {
-          var pt = r.priority === 'URGENT' || r.priority === 'HIGH' ? 'tag-red' : r.priority === 'MEDIUM' ? 'tag-yellow' : 'tag-gray';
-          var st = r.status === 'COMPLETED' ? 'tag-green' : r.status === 'IN_PROGRESS' || r.status === 'ACKNOWLEDGED' ? 'tag-blue' : 'tag-yellow';
-          return '<tr><td>' + h(r.title) + '</td><td><span class="tag ' + pt + '">' + (r.priority || '—') + '</span></td><td><span class="tag ' + st + '">' + (r.status || '—') + '</span></td><td>' + (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—') + '</td></tr>';
-        }).join('');
-        document.getElementById('tpMaintenance').innerHTML = '<table><thead><tr><th>Title</th><th>Priority</th><th>Status</th><th>Date</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      if (maintRes.ok) {
+        window.tenantMaintRequests = maintRes.data || [];
+        filterTenantMaint();
       }
     } catch(e) { document.getElementById('tpMaintenance').innerHTML = '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">No requests.</div>'; }
+
+    await loadTenantDocuments();
   }
 
-  function openMaintModal() {
+  async function loadTenantDocuments() {
+    var el = document.getElementById('tpDocuments');
+    try {
+      var res = await api('/tenants/me/documents');
+      if (res.ok && res.data && res.data.length) {
+        var rows = res.data.map(function(d) {
+          var link = d.url ? '<a href="' + h(d.url) + '" target="_blank" rel="noopener">' + h(d.title) + '</a>' : h(d.title);
+          return '<tr><td>' + link + '</td><td><span class="tag tag-gray">' + h(d.category || 'OTHER') + '</span></td><td>' + (d.uploadedAt ? new Date(d.uploadedAt).toLocaleDateString() : '—') + '</td><td><a href="#" onclick="deleteTenantDocument(\\'' + d.id + '\\'); return false;" style="color:#dc2626;font-size:.8rem">Remove</a></td></tr>';
+        }).join('');
+        el.innerHTML = '<table><thead><tr><th>Title</th><th>Category</th><th>Added</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+      } else {
+        el.innerHTML = '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">No documents yet.</div>';
+      }
+    } catch(e) { el.innerHTML = '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">Could not load documents.</div>'; }
+  }
+
+  window.openDocumentModal = function() {
+    var html =
+      '<div class="modal-overlay open" id="docModal"><div class="modal">' +
+      '<h2>Add document</h2>' +
+      '<form id="docForm">' +
+      '<div class="field"><label>Title *</label><input type="text" id="docTitle" placeholder="e.g. Aadhaar card, Signed agreement" required></div>' +
+      '<div class="field"><label>Category</label><select id="docCategory"><option value="ID_PROOF">ID Proof</option><option value="LEASE_AGREEMENT">Lease Agreement</option><option value="INCOME_PROOF">Income Proof</option><option value="OTHER" selected>Other</option></select></div>' +
+      '<div class="field"><label>Upload file (image, PDF, Word, Excel...)</label><input type="file" id="docFile" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"></div>' +
+      '<div class="field"><label>...or paste a link instead</label><input type="url" id="docUrl" placeholder="https://..."></div>' +
+      '<div class="btn-row"><button type="submit" class="btn btn-primary btn-sm" id="docSubmitBtn">Add</button>' +
+      '<button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">Cancel</button></div>' +
+      '</form></div></div>';
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    document.body.appendChild(div);
+    document.getElementById('docForm').addEventListener('submit', async function(ev) {
+      ev.preventDefault();
+      var title = document.getElementById('docTitle').value.trim();
+      var category = document.getElementById('docCategory').value;
+      var url = document.getElementById('docUrl').value.trim();
+      var file = document.getElementById('docFile').files[0];
+      if (!title) return;
+
+      var submitBtn = document.getElementById('docSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span>' + (file ? 'Uploading...' : 'Adding...');
+
+      try {
+        var res;
+        if (file) {
+          var fd = new FormData();
+          fd.append('file', file);
+          fd.append('title', title);
+          fd.append('category', category);
+          res = await api('/tenants/me/documents/upload', { method: 'POST', body: fd });
+        } else {
+          res = await api('/tenants/me/documents', { method: 'POST', body: { title: title, category: category, url: url || undefined } });
+        }
+        if (res.ok) { document.getElementById('docModal').remove(); toast('Document added', 'success'); loadTenantDocuments(); }
+        else {
+          toast(res.data.message || 'Failed', 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Add';
+        }
+      } catch(e) {
+        toast('Failed to add document', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add';
+      }
+    });
+  };
+
+  window.deleteTenantDocument = async function(id) {
+    try {
+      var res = await api('/tenants/me/documents/' + id, { method: 'DELETE' });
+      if (res.ok) { toast('Document removed', 'success'); loadTenantDocuments(); }
+      else { toast(res.data.message || 'Failed to remove', 'error'); }
+    } catch(e) { toast('Failed to remove document', 'error'); }
+  };
+
+  window.filterTenantInvoices = function() {
+    var cat = document.getElementById('tpInvCategoryFilter').value;
+    var status = document.getElementById('tpInvStatusFilter').value;
+    var filtered = window.tenantInvoices || [];
+    if (cat) filtered = filtered.filter(function(i) { return i.category === cat; });
+    if (status) filtered = filtered.filter(function(i) { return i.status === status; });
+    
+    if (filtered.length) {
+      var rows = filtered.map(function(i) {
+        var st = i.status === 'PAID' ? 'tag-green' : i.status === 'OVERDUE' ? 'tag-red' : 'tag-yellow';
+        return '<tr><td>' + h(i.invoiceNumber) + '</td><td><span class="tag tag-gray">' + h(i.category || 'RENT') + '</span></td><td><span class="val">₹' + (i.totalAmount || 0).toLocaleString() + '</span></td><td><span class="val">₹' + (i.paidAmount || 0).toLocaleString() + '</span></td><td><span class="tag ' + st + '">' + (i.status || '—') + '</span></td><td>' + new Date(i.dueDate).toLocaleDateString() + '</td></tr>';
+      }).join('');
+      document.getElementById('tpInvoices').innerHTML = '<table><thead><tr><th>Invoice</th><th>Category</th><th>Total</th><th>Paid</th><th>Status</th><th>Due</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    } else {
+      document.getElementById('tpInvoices').innerHTML = '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">No invoices matching filters.</div>';
+    }
+  };
+
+  window.filterTenantMaint = function() {
+    var cat = document.getElementById('tpMaintCategoryFilter').value;
+    var filtered = window.tenantMaintRequests || [];
+    if (cat) filtered = filtered.filter(function(r) { return r.category === cat; });
+    
+    if (filtered.length) {
+      var rows = filtered.map(function(r) {
+        var pt = r.priority === 'URGENT' || r.priority === 'HIGH' ? 'tag-red' : r.priority === 'MEDIUM' ? 'tag-yellow' : 'tag-gray';
+        var st = r.status === 'COMPLETED' ? 'tag-green' : r.status === 'IN_PROGRESS' || r.status === 'ACKNOWLEDGED' ? 'tag-blue' : 'tag-yellow';
+        return '<tr><td>' + h(r.title) + '</td><td><span class="tag tag-gray">' + h(r.category || 'MAINTENANCE') + '</span></td><td><span class="tag ' + pt + '">' + (r.priority || '—') + '</span></td><td><span class="tag ' + st + '">' + (r.status || '—') + '</span></td><td>' + (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—') + '</td></tr>';
+      }).join('');
+      document.getElementById('tpMaintenance').innerHTML = '<table><thead><tr><th>Title</th><th>Type</th><th>Priority</th><th>Status</th><th>Date</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    } else {
+      document.getElementById('tpMaintenance').innerHTML = '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">No requests matching filter.</div>';
+    }
+  };
+
+  window.openMaintModal = function() {
     var html =
       '<div class="modal-overlay open" id="maintModal">' +
       '<div class="modal">' +
-      '<h2>Submit maintenance request</h2>' +
+      '<h2>Submit support / maintenance request</h2>' +
       '<form id="maintForm">' +
-      '<div class="field"><label>Title *</label><input type="text" id="maintTitle" placeholder="e.g. Leaking faucet" required></div>' +
+      '<div class="field"><label>Category *</label><select id="maintCategory"><option value="MAINTENANCE">Maintenance & Repairs</option><option value="QUERY">Queries & Support</option></select></div>' +
+      '<div class="field"><label>Title *</label><input type="text" id="maintTitle" placeholder="e.g. Leaking faucet / NOC query" required></div>' +
       '<div class="field"><label>Description</label><textarea id="maintDesc" placeholder="Describe the issue..."></textarea></div>' +
       '<div class="field"><label>Priority</label><select id="maintPriority"><option value="LOW">Low</option><option value="MEDIUM" selected>Medium</option><option value="HIGH">High</option><option value="URGENT">Urgent</option></select></div>' +
       '<div class="btn-row"><button type="submit" class="btn btn-primary btn-sm">Submit</button>' +
@@ -293,17 +609,18 @@
     document.body.appendChild(div);
     document.getElementById('maintForm').addEventListener('submit', async function(ev) {
       ev.preventDefault();
+      var category = document.getElementById('maintCategory').value;
       var title = document.getElementById('maintTitle').value.trim();
       var desc = document.getElementById('maintDesc').value.trim();
       var priority = document.getElementById('maintPriority').value;
       if (!title) return;
       try {
-        var res = await api('/tenants/me/maintenance', { method: 'POST', body: { title: title, description: desc, priority: priority } });
+        var res = await api('/tenants/me/maintenance', { method: 'POST', body: { category: category, title: title, description: desc, priority: priority } });
         if (res.ok) { document.getElementById('maintModal').remove(); renderTenantPortal(); }
         else { toast(res.data.message || 'Failed'); }
       } catch(e) { toast('Failed to submit request'); }
     });
-  }
+  };
 
   /* ── Owner Portal ──────────────────────────────────────── */
   async function renderOwnerPortal() {
@@ -335,7 +652,7 @@
         var cards = propRes.data.map(function(p) {
           var units = 0, occupied = 0;
           if (p.buildings) { p.buildings.forEach(function(b) { if (b.units) { b.units.forEach(function(u) { units++; if (u.status === 'OCCUPIED') occupied++; }); } }); }
-          return '<div class="card"><h4>' + h(p.name) + '</h4><p>' + h(p.address || '') + '</p><div class="meta">' + units + ' units · <span class="tag tag-green">' + occupied + ' occ.</span> <span class="tag tag-yellow">' + (units - occupied) + ' vac.</span></div></div>';
+          return '<div class="card"><div class="card-hd"><div class="card-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><h4>' + h(p.name) + '</h4></div><p>' + h(p.address || '') + '</p><div class="meta">' + units + ' units · <span class="tag tag-green">' + occupied + ' occ.</span> <span class="tag tag-yellow">' + (units - occupied) + ' vac.</span></div></div>';
         }).join('');
         document.getElementById('ownProps').innerHTML = cards;
       }
@@ -377,10 +694,11 @@
   window.renderProperties = async function() {
     var isOwner = roleTypes.includes('OWNER');
     var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER'; });
+    var canAddProperty = isStaff || isOwner;
 
     setContent(
       '<div class="page-header"><h2>Properties</h2><p>Manage your property portfolio</p></div>' +
-      (isStaff ? '<div class="btn-row"><button class="btn btn-primary btn-sm" onclick="openPropertyModal()">+ Add Property</button></div>' : '') +
+      (canAddProperty ? '<div class="btn-row"><button class="btn btn-primary btn-sm" onclick="openPropertyModal()">+ Add Property</button></div>' : '') +
       '<div class="filter-bar">' +
       '<select id="propFilter"><option value="">All status</option><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option><option value="UNDER_MAINTENANCE">Under Maintenance</option></select>' +
       '<input id="propSearch" placeholder="Search..." onkeyup="if(event.keyCode===13)renderProperties()">' +
@@ -399,15 +717,19 @@
         var props = res.data.data || [];
         if (props.length) {
           var cards = props.map(function(p) {
-            return '<div class="card" style="cursor:pointer" data-action="show-property" data-id="' + p.id + '" data-name="' + h(p.name) + '">' +
+            var imgUrl = p.imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=400&h=250';
+            return '<div class="card prop-card" style="cursor:pointer" data-action="show-property" data-id="' + p.id + '" data-name="' + h(p.name) + '">' +
+              '<img src="' + imgUrl + '" alt="Property Image">' +
+              '<div class="prop-card-body">' +
               '<h4>' + h(p.name) + '</h4>' +
               '<p>' + h(p.address || '') + ', ' + h(p.city || '') + '</p>' +
               '<div class="meta">' + (p.buildingCount || 0) + ' buildings · <span class="tag ' + (p.status === 'ACTIVE' ? 'tag-green' : p.status === 'UNDER_MAINTENANCE' ? 'tag-yellow' : 'tag-gray') + '">' + (p.status || '—') + '</span></div>' +
+              '</div>' +
               '</div>';
           }).join('');
           document.getElementById('propList').innerHTML = cards;
         } else {
-          document.getElementById('propList').innerHTML = '<div class="empty-state"><div class="icon">🏠</div><p>No properties found. ' + (isStaff ? 'Click "Add Property" to get started.' : '') + '</p></div>';
+          document.getElementById('propList').innerHTML = '<div class="empty-state"><div class="icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><p>No properties found. ' + (canAddProperty ? 'Click "Add Property" to get started.' : '') + '</p></div>';
         }
       }
     } catch(e) { document.getElementById('propList').innerHTML = '<div class="empty-state"><p>Could not load properties.</p></div>'; }
@@ -450,11 +772,27 @@
   /* ── Property Detail ────────────────────────────────────── */
   window.showPropertyDetail = async function(propId, propName) {
     var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER'; });
+    var canAssignManager = roleTypes.includes('OWNER') || roleTypes.includes('ADMIN');
 
-    setContent('<a class="back-link" onclick="showView(\\\'properties\\\')">← Back to properties</a>' +
+    var buttons = '';
+    if (isStaff) buttons += '<button class="btn btn-primary btn-sm" data-action="add-building" data-prop-id="' + propId + '">+ Add Building</button>';
+    if (canAssignManager) buttons += '<button class="btn btn-secondary btn-sm" data-action="assign-manager" data-prop-id="' + propId + '">Assign Manager</button>';
+
+    setContent('<a class="back-link" onclick="showView(&apos;properties&apos;)">← Back to properties</a>' +
       '<div class="page-header"><h2>' + h(propName) + '</h2><p>Buildings inside this property</p></div>' +
-      (isStaff ? '<div class="btn-row"><button class="btn btn-primary btn-sm" data-action="add-building" data-prop-id="' + propId + '">+ Add Building</button></div>' : '') +
+      '<div id="managerBox" style="margin-bottom:1rem"></div>' +
+      (buttons ? '<div class="btn-row">' + buttons + '</div>' : '') +
       '<div id="buildingList"><div class="loading" style="padding:2rem"><div class="pulse"></div></div></div>');
+
+    try {
+      var propRes = await api('/properties/' + propId);
+      if (propRes.ok) {
+        var m = propRes.data.manager;
+        document.getElementById('managerBox').innerHTML = m
+          ? '<div class="card" style="padding:.75rem 1rem"><strong>Manager:</strong> ' + h(m.firstName + ' ' + m.lastName) + (m.phone ? ' · ' + h(m.phone) : '') + '</div>'
+          : '<div class="card" style="padding:.75rem 1rem;color:#a1a1aa;font-size:.85rem">No manager assigned yet.</div>';
+      }
+    } catch(e) {}
 
     try {
       var res = await api('/properties/' + propId + '/buildings');
@@ -463,7 +801,7 @@
         if (buildings.length) {
           var cards = buildings.map(function(b) {
             return '<div class="card" style="cursor:pointer" data-action="show-building" data-id="' + b.id + '" data-name="' + h(b.name) + '" data-prop-id="' + propId + '">' +
-              '<h4>' + h(b.name) + '</h4>' +
+              '<div class="card-hd"><div class="card-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><h4>' + h(b.name) + '</h4></div>' +
               '<p>' + (b.code ? h(b.code) + ' · ' : '') + (b.unitCount || 0) + ' units</p>' +
               '</div>';
           }).join('');
@@ -481,7 +819,7 @@
   window.showBuildingDetail = async function(buildingId, buildingName, propId) {
     var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER'; });
 
-    setContent('<a class="back-link" onclick="showPropertyDetail(\\\'' + propId + '\\\', \\\'\\\')">← Back to property</a>' +
+    setContent('<a class="back-link" onclick="showPropertyDetail(&apos;' + propId + '&apos;, &apos;&apos;)">← Back to property</a>' +
       '<div class="page-header"><h2>Building: ' + h(buildingName) + '</h2><p>Units listing</p></div>' +
       '<div class="filter-bar">' +
       '<select id="unitFilter"><option value="">All units</option><option value="VACANT">Vacant</option><option value="OCCUPIED">Occupied</option><option value="MAINTENANCE">Maintenance</option></select>' +
@@ -565,7 +903,7 @@
 
   /* ── Tenant Detail ──────────────────────────────────────── */
   window.showTenantDetail = async function(id) {
-    setContent('<a class="back-link" onclick="showView(\\\'tenants\\\')">← Back to tenants</a>' +
+    setContent('<a class="back-link" onclick="showView(&apos;tenants&apos;)">← Back to tenants</a>' +
       '<div class="page-header"><h2>Tenant Profile</h2><p>Tenant contact and status details</p></div>' +
       '<div id="tenantDetail" class="card"><div class="loading"><div class="pulse"></div></div></div>'
     );
@@ -583,6 +921,16 @@
             }
           } catch(e) {}
         }
+        var docs = Array.isArray(t.documents) ? t.documents : [];
+        var docsHtml = docs.length
+          ? '<table><thead><tr><th>Title</th><th>Category</th><th>Added</th></tr></thead><tbody>' +
+            docs.map(function(d) {
+              var link = d.url ? '<a href="' + h(d.url) + '" target="_blank" rel="noopener">' + h(d.title) + '</a>' : h(d.title);
+              return '<tr><td>' + link + '</td><td><span class="tag tag-gray">' + h(d.category || 'OTHER') + '</span></td><td>' + (d.uploadedAt ? new Date(d.uploadedAt).toLocaleDateString() : '—') + '</td></tr>';
+            }).join('') +
+            '</tbody></table>'
+          : '<div style="padding:1.25rem;text-align:center;color:#a1a1aa;font-size:.82rem">No documents on file.</div>';
+
         document.getElementById('tenantDetail').innerHTML =
           '<h3 style="font-size:1.1rem;font-weight:600;margin-bottom:0.75rem">' + h(t.firstName) + ' ' + h(t.lastName) + '</h3>' +
           '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;font-size:.85rem;line-height:1.6">' +
@@ -596,7 +944,9 @@
               '<p><strong>Notes:</strong> ' + (t.notes ? h(t.notes) : '—') + '</p>' +
               '<p><strong>Created At:</strong> ' + new Date(t.createdAt).toLocaleString() + '</p>' +
             '</div>' +
-          '</div>';
+          '</div>' +
+          '<div class="section-h" style="margin-top:1.25rem">Documents</div>' +
+          '<div class="table-wrap">' + docsHtml + '</div>';
       } else {
         document.getElementById('tenantDetail').innerHTML = '<div class="empty-state"><p>Could not load tenant details.</p></div>';
       }
@@ -712,7 +1062,7 @@
             var st = r.status === 'COMPLETED' ? 'tag-green' : r.status === 'IN_PROGRESS' || r.status === 'ACKNOWLEDGED' ? 'tag-blue' : 'tag-yellow';
             var tenantName = r.tenant ? (r.tenant.firstName + ' ' + r.tenant.lastName) : '—';
             return '<tr><td><span class="val">' + h(r.title) + '</span></td><td>' + h(tenantName) + '</td><td>' + (r.unit ? h(r.unit.name) : '—') + '</td><td><span class="tag ' + pt + '">' + (r.priority || '—') + '</span></td><td><span class="tag ' + st + '">' + (r.status || '—') + '</span></td><td>' + (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—') + '</td><td>' +
-              (roleTypes.includes('ADMIN') || roleTypes.includes('MANAGER') ? '<select class="maint-status-update" data-id="' + r.id + '" onchange="updateMaintStatus(this)"><option value="">Update</option><option value="ACKNOWLEDGED">Acknowledge</option><option value="IN_PROGRESS">In Progress</option><option value="COMPLETED">Completed</option><option value="CANCELLED">Cancel</option></select>' : '') +
+              (roleTypes.includes('ADMIN') || roleTypes.includes('MANAGER') || roleTypes.includes('OWNER') ? '<select class="maint-status-update" data-id="' + r.id + '" onchange="updateMaintStatus(this)"><option value="">Update</option><option value="ACKNOWLEDGED">Acknowledge</option><option value="IN_PROGRESS">In Progress</option><option value="COMPLETED">Completed</option><option value="CANCELLED">Cancel</option></select>' : '') +
               '</td></tr>';
           }).join('');
           document.getElementById('maintTable').innerHTML = '<table><thead><tr><th>Title</th><th>Tenant</th><th>Unit</th><th>Priority</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody></table>';
@@ -749,11 +1099,11 @@
         var vendors = res.data || [];
         if (vendors.length) {
           var cards = vendors.map(function(v) {
-            return '<div class="card"><h4>' + h(v.name) + '</h4><p>' + (v.contactPerson ? h(v.contactPerson) + ' · ' : '') + (v.email ? h(v.email) + ' · ' : '') + (v.phone || '') + '</p><div class="meta"><span class="tag tag-blue">' + (v.specialty || 'OTHER') + '</span>' + (v.isApproved ? ' <span class="tag tag-green">Approved</span>' : '') + '</div></div>';
+            return '<div class="card"><div class="card-hd"><div class="card-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><h4>' + h(v.name) + '</h4></div><p>' + (v.contactPerson ? h(v.contactPerson) + ' · ' : '') + (v.email ? h(v.email) + ' · ' : '') + (v.phone || '') + '</p><div class="meta"><span class="tag tag-blue">' + (v.specialty || 'OTHER') + '</span>' + (v.isApproved ? ' <span class="tag tag-green">Approved</span>' : '') + '</div></div>';
           }).join('');
           document.getElementById('vendorList').innerHTML = cards;
         } else {
-          document.getElementById('vendorList').innerHTML = '<div class="empty-state"><div class="icon">🏪</div><p>No vendors yet. Add one to get started.</p></div>';
+          document.getElementById('vendorList').innerHTML = '<div class="empty-state"><div class="icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4.5h9L18 2"/><path d="M3.5 6.5h17l-1 13a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z"/><path d="M9 10a3 3 0 0 0 6 0"/></svg></div><p>No vendors yet. Add one to get started.</p></div>';
         }
       }
     } catch(e) { document.getElementById('vendorList').innerHTML = '<div class="empty-state"><p>Could not load vendors.</p></div>'; }
@@ -780,6 +1130,29 @@
       ev.preventDefault();
       var body = { name: document.getElementById('pName').value.trim(), address: document.getElementById('pAddr').value.trim(), city: document.getElementById('pCity').value.trim(), state: document.getElementById('pState').value.trim(), zipCode: document.getElementById('pZip').value.trim(), type: document.getElementById('pType').value, yearBuilt: parseInt(document.getElementById('pYear').value) || undefined, description: document.getElementById('pDesc').value.trim() || undefined };
       try { var r = await api('/properties', { method: 'POST', body: body }); if (r.ok) { document.getElementById('propModal').remove(); renderProperties(); } else { toast(r.data.message || 'Failed'); } } catch(e) { toast('Failed'); }
+    });
+  };
+
+  // Assign Manager Modal
+  window.openAssignManagerModal = function(propId) {
+    var html =
+      '<div class="modal-overlay open" id="assignMgrModal"><div class="modal">' +
+      '<h2>Assign Manager</h2>' +
+      '<p style="font-size:.8rem;color:#71717a;margin:-.5rem 0 1rem">Enter the manager mobile number. If no account exists for that number yet, one is created automatically and the manager signs in via OTP.</p>' +
+      '<form id="assignMgrForm">' +
+      '<div class="field"><label>Mobile Number *</label><input id="amPhone" placeholder="+91 98765 43210" required></div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"><div class="field"><label>First Name</label><input id="amFirst" placeholder="New manager only"></div><div class="field"><label>Last Name</label><input id="amLast" placeholder="New manager only"></div></div>' +
+      '<div class="btn-row"><button type="submit" class="btn btn-primary btn-sm">Assign</button><button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">Cancel</button></div>' +
+      '</form></div></div>';
+    var div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div);
+    document.getElementById('assignMgrForm').addEventListener('submit', async function(ev) {
+      ev.preventDefault();
+      var body = { phone: document.getElementById('amPhone').value.trim(), firstName: document.getElementById('amFirst').value.trim() || undefined, lastName: document.getElementById('amLast').value.trim() || undefined };
+      try {
+        var r = await api('/properties/' + propId + '/manager', { method: 'PATCH', body: body });
+        if (r.ok) { document.getElementById('assignMgrModal').remove(); toast('Manager assigned', 'success'); showPropertyDetail(propId, ''); }
+        else { toast(r.data.message || 'Failed', 'error'); }
+      } catch(e) { toast('Failed to assign manager', 'error'); }
     });
   };
 

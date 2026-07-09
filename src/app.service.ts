@@ -2242,7 +2242,7 @@ export class AppService {
     document.getElementById('navItems').style.display = 'none';
     document.getElementById('sidebarRole').textContent = 'Choose a role';
     var cards = allRoles.map(function(r) {
-      return '<div class="card" style="cursor:pointer;text-align:center;padding:1.5rem" onclick="chooseRole(\\'' + r + '\\')"><h4 style="margin-bottom:.35rem">' + roleLabel(r) + '</h4><p style="font-size:.8rem;color:#71717a">Continue as ' + roleLabel(r) + '</p></div>';
+      return '<div class="card" style="cursor:pointer;text-align:center;padding:1.5rem" onclick="chooseRole(\'' + r + '\')"><h4 style="margin-bottom:.35rem">' + roleLabel(r) + '</h4><p style="font-size:.8rem;color:#71717a">Continue as ' + roleLabel(r) + '</p></div>';
     }).join('');
     setContent(
       '<div class="page-header"><h2>Choose how to continue</h2><p>Your account has multiple roles. Pick one to enter its dashboard.</p></div>' +
