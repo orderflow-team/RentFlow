@@ -789,21 +789,35 @@ export class AppService {
     *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:'Inter',-apple-system,sans-serif;
-      background:#0a0a0b;color:#fafafa;line-height:1.6;
+      background:#07050f;color:#fafafa;line-height:1.6;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;display:flex;flex-direction:column;
     }
-    .check-grid-bg{
-      position:fixed;inset:0;pointer-events:none;z-index:0;
-      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 32px 32px;
-      background-color: #0b0814;
+    .bg-solid {
+      position: fixed; inset: 0; background-color: #05030a; z-index: 0; pointer-events: none;
     }
-    .check-grid-glow{
-      position:absolute;top:50%;left:20%;transform:translateY(-50%);
-      width:800px;height:800px;
-      background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 60%);
-      pointer-events:none;z-index:0;
+    .check-grid-bg{
+      position:fixed;inset:0;pointer-events:none;z-index:2;
+      background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .bg-glow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    }
+    .glow-1 {
+      position: absolute; top: -10%; left: -20%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 60%);
+    }
+    .glow-2 {
+      position: absolute; bottom: -10%; right: -10%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 60%);
+    }
+    .glow-3 {
+      position: absolute; top: 30%; left: 10%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
     }
     .page-wrap{display:flex;min-height:100vh;position:relative;z-index:1}
     .brand-side{
@@ -1002,22 +1016,17 @@ export class AppService {
       font-size: 0.8rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    .glow-1 {
-      position: absolute; top: -10%; left: -10%;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
-    .glow-2 {
-      position: absolute; bottom: -10%; left: 30%;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
+    /* glows defined globally at top of CSS stylesheet */
   </style>
 </head>
 <body>
-<div class="check-grid-bg"><div class="glow-1"></div><div class="glow-2"></div></div>
+<div class="bg-solid"></div>
+<div class="bg-glow">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+  <div class="glow-3"></div>
+</div>
+<div class="check-grid-bg"></div>
 <div class="page-wrap">
   <div class="brand-side">
     <div class="top-logo">
@@ -1289,21 +1298,35 @@ export class AppService {
     *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:'Inter',-apple-system,sans-serif;
-      background:#0a0a0b;color:#fafafa;line-height:1.6;
+      background:#07050f;color:#fafafa;line-height:1.6;
       -webkit-font-smoothing:antialiased;
       min-height:100vh;display:flex;flex-direction:column;
     }
-    .check-grid-bg{
-      position:fixed;inset:0;pointer-events:none;z-index:0;
-      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 32px 32px;
-      background-color: #0b0814;
+    .bg-solid {
+      position: fixed; inset: 0; background-color: #05030a; z-index: 0; pointer-events: none;
     }
-    .check-grid-glow{
-      position:absolute;top:50%;left:20%;transform:translateY(-50%);
-      width:800px;height:800px;
-      background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 60%);
-      pointer-events:none;z-index:0;
+    .check-grid-bg{
+      position:fixed;inset:0;pointer-events:none;z-index:2;
+      background-image: linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .bg-glow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    }
+    .glow-1 {
+      position: absolute; top: -10%; left: -20%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 60%);
+    }
+    .glow-2 {
+      position: absolute; bottom: -10%; right: -10%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 60%);
+    }
+    .glow-3 {
+      position: absolute; top: 30%; left: 10%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
     }
     .page-wrap{display:flex;min-height:100vh;position:relative;z-index:1}
     .brand-side{
@@ -1492,22 +1515,17 @@ export class AppService {
       font-size: 0.8rem;
       box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
-    .glow-1 {
-      position: absolute; top: -10%; left: -10%;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
-    .glow-2 {
-      position: absolute; bottom: -10%; left: 30%;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-    }
+    /* glows defined globally at top of CSS stylesheet */
   </style>
 </head>
 <body>
-<div class="check-grid-bg"><div class="glow-1"></div><div class="glow-2"></div></div>
+<div class="bg-solid"></div>
+<div class="bg-glow">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+  <div class="glow-3"></div>
+</div>
+<div class="check-grid-bg"></div>
 <div class="page-wrap">
   <div class="brand-side">
     <div class="top-logo">
