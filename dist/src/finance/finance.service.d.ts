@@ -1,0 +1,183 @@
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { RecordPaymentDto } from './dto/record-payment.dto';
+import { CreateExpenseDto } from './dto/create-expense.dto';
+import type { JwtPayload } from '../common/enums/role.enum';
+export declare class FinanceService {
+    private prisma;
+    private logger;
+    constructor(prisma: PrismaService);
+    private generateInvoiceNumber;
+    private getScopedInvoiceWhereClause;
+    private getScopedExpenseWhereClause;
+    createInvoice(companyId: string, user: JwtPayload, dto: CreateInvoiceDto): Promise<{
+        id: any;
+        invoiceNumber: any;
+        leaseId: any;
+        unitId: any;
+        tenantId: any;
+        periodStart: any;
+        periodEnd: any;
+        dueDate: any;
+        rentAmount: any;
+        lateFee: any;
+        otherCharges: any;
+        totalAmount: any;
+        paidAmount: any;
+        balanceDue: any;
+        status: any;
+        paidAt: any;
+        notes: any;
+        category: any;
+        tenant: string | null;
+        unit: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
+    findAllInvoices(companyId: string, user: JwtPayload, filters?: {
+        status?: string;
+        page?: number;
+        limit?: number;
+    }): Promise<{
+        data: {
+            id: any;
+            invoiceNumber: any;
+            leaseId: any;
+            unitId: any;
+            tenantId: any;
+            periodStart: any;
+            periodEnd: any;
+            dueDate: any;
+            rentAmount: any;
+            lateFee: any;
+            otherCharges: any;
+            totalAmount: any;
+            paidAmount: any;
+            balanceDue: any;
+            status: any;
+            paidAt: any;
+            notes: any;
+            category: any;
+            tenant: string | null;
+            unit: any;
+            createdAt: any;
+            updatedAt: any;
+        }[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    findOneInvoice(companyId: string, id: string, user: JwtPayload): Promise<{
+        payments: {
+            id: string;
+            createdAt: Date;
+            deletedAt: Date | null;
+            companyId: string;
+            notes: string | null;
+            amount: number;
+            paymentDate: Date;
+            paymentMethod: import("@prisma/client").$Enums.PaymentMethod;
+            reference: string | null;
+            receipt: string | null;
+            invoiceId: string;
+        }[];
+        id: any;
+        invoiceNumber: any;
+        leaseId: any;
+        unitId: any;
+        tenantId: any;
+        periodStart: any;
+        periodEnd: any;
+        dueDate: any;
+        rentAmount: any;
+        lateFee: any;
+        otherCharges: any;
+        totalAmount: any;
+        paidAmount: any;
+        balanceDue: any;
+        status: any;
+        paidAt: any;
+        notes: any;
+        category: any;
+        tenant: string | null;
+        unit: any;
+        createdAt: any;
+        updatedAt: any;
+    }>;
+    recordPayment(companyId: string, invoiceId: string, user: JwtPayload, dto: RecordPaymentDto): Promise<{
+        id: string;
+        createdAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        notes: string | null;
+        amount: number;
+        paymentDate: Date;
+        paymentMethod: import("@prisma/client").$Enums.PaymentMethod;
+        reference: string | null;
+        receipt: string | null;
+        invoiceId: string;
+    }>;
+    getPaymentHistory(companyId: string, invoiceId: string, user: JwtPayload): Promise<{
+        id: string;
+        createdAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        notes: string | null;
+        amount: number;
+        paymentDate: Date;
+        paymentMethod: import("@prisma/client").$Enums.PaymentMethod;
+        reference: string | null;
+        receipt: string | null;
+        invoiceId: string;
+    }[]>;
+    createExpense(companyId: string, user: JwtPayload, dto: CreateExpenseDto): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        description: string | null;
+        notes: string | null;
+        propertyId: string | null;
+        category: import("@prisma/client").$Enums.ExpenseCategory;
+        amount: number;
+        receipt: string | null;
+        expenseDate: Date;
+        vendor: string | null;
+    }>;
+    findAllExpenses(companyId: string, user: JwtPayload, filters?: {
+        category?: string;
+        propertyId?: string;
+        page?: number;
+        limit?: number;
+    }): Promise<{
+        data: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            companyId: string;
+            description: string | null;
+            notes: string | null;
+            propertyId: string | null;
+            category: import("@prisma/client").$Enums.ExpenseCategory;
+            amount: number;
+            receipt: string | null;
+            expenseDate: Date;
+            vendor: string | null;
+        }[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    removeExpense(companyId: string, id: string, user: JwtPayload): Promise<{
+        message: string;
+    }>;
+    private formatInvoice;
+}

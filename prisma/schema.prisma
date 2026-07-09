@@ -1,0 +1,793 @@
+// RentFlow - Multi-Tenant Property Management SaaS
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Core Enums ─────────────────────────────────────────────────────────────
+
+enum RoleType {
+  ADMIN
+  MANAGER
+  ACCOUNTANT
+  TENANT
+  OWNER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  INVITED
+  SUSPENDED
+}
+
+enum CompanyStatus {
+  ACTIVE
+  TRIAL
+  SUSPENDED
+  CANCELLED
+}
+
+// ─── Multi-Tenant Core ──────────────────────────────────────────────────────
+
+model Company {
+  id        String        @id @default(cuid())
+  name      String
+  slug      String        @unique
+  email     String?
+  phone     String?
+  address   String?
+  logo      String?
+  status    CompanyStatus @default(TRIAL)
+  timezone  String        @default("UTC")
+  locale    String        @default("en")
+  metadata  Json?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+
+  users       User[]
+  tenants     Tenant[]
+  owners      Owner[]
+  properties  Property[]
+  buildings   Building[]
+  units       Unit[]
+  leases      Lease[]
+  invoices    Invoice[]
+  payments    Payment[]
+  expenses    Expense[]
+  maintenanceRequests MaintenanceRequest[]
+  vendors     Vendor[]
+  responsibilities    Responsibility[]
+  applications        PropertyApplication[]
+  reviews             Review[]
+
+  @@map("companies")
+}
+
+model Role {
+  id        String   @id @default(cuid())
+  type      RoleType @unique
+  name      String
+  slug      String   @unique
+  level     Int
+  isSystem  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users UserRole[]
+
+  @@map("roles")
+}
+
+model User {
+  id             String     @id @default(cuid())
+  email          String     @unique
+  passwordHash   String
+  firstName      String
+  lastName       String
+  phone          String?    @unique
+  avatar         String?
+  status         UserStatus @default(INVITED)
+  isOwner        Boolean    @default(false)
+  lastLoginAt    DateTime?
+  passwordChangedAt DateTime?
+  twoFactorEnabled Boolean  @default(false)
+  twoFactorSecret  String?
+  companyId      String
+  company        Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  deletedAt      DateTime?
+
+  roles              UserRole[]
+  refreshTokens      RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  createdProperties  Property[]  @relation("PropertyCreator")
+  updatedProperties  Property[]  @relation("PropertyUpdater")
+  managedProperties  Property[]  @relation("PropertyManager")
+  owners             Owner[]
+  tenants            Tenant[]
+
+  @@unique([companyId, email])
+  @@map("users")
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  companyId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId, companyId])
+  @@map("user_roles")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+
+  @@index([token])
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─── People Module ───────────────────────────────────────────────────────────
+
+enum TenantStatus {
+  ACTIVE
+  INACTIVE
+  INVITED
+  FORMER
+}
+
+model Tenant {
+  id            String       @id @default(cuid())
+  companyId     String
+  company       Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstName     String
+  lastName      String
+  email         String
+  phone         String?
+  status        TenantStatus @default(ACTIVE)
+  emergencyContact Json?
+  notes         String?
+  documents     Json?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  deletedAt     DateTime?
+
+  trustScore          Float                 @default(100.0)
+  verifiedStaysCount  Int                   @default(0)
+  averageRating       Float                 @default(0.0)
+  isReputationPublic  Boolean               @default(true)
+
+  leases             Lease[]
+  invoices           Invoice[]
+  maintenanceRequests MaintenanceRequest[]
+  applications        PropertyApplication[]
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@map("tenants")
+}
+
+enum OwnerStatus {
+  ACTIVE
+  INACTIVE
+  FORMER
+}
+
+model Owner {
+  id        String      @id @default(cuid())
+  companyId String
+  company   Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  status    OwnerStatus @default(ACTIVE)
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+
+  trustScore          Float                 @default(100.0)
+  verifiedStaysCount  Int                   @default(0)
+  averageRating       Float                 @default(0.0)
+  isReputationPublic  Boolean               @default(true)
+
+  properties Property[]
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@map("owners")
+}
+
+// ─── Property Module ─────────────────────────────────────────────────────────
+
+enum PropertyType {
+  APARTMENT_COMPLEX
+  SINGLE_FAMILY
+  MULTI_FAMILY
+  COMMERCIAL
+  MIXED_USE
+  CONDO
+  TOWNHOUSE
+  DUPLEX
+  TRIPLEX
+  QUADPLEX
+}
+
+enum PropertyStatus {
+  ACTIVE
+  INACTIVE
+  UNDER_MAINTENANCE
+  SOLD
+  ARCHIVED
+  AVAILABLE_SOON
+}
+
+model Property {
+  id          String         @id @default(cuid())
+  companyId   String
+  company     Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  type        PropertyType   @default(APARTMENT_COMPLEX)
+  status      PropertyStatus @default(ACTIVE)
+  description String?
+  notes       String?
+  address     String
+  city        String
+  state       String
+  zipCode     String
+  country     String         @default("US")
+  totalUnits  Int            @default(0)
+  yearBuilt   Int?
+  amenities   Json?
+  images      Json?
+  metadata    Json?
+  latitude    Float?
+  longitude   Float?
+  ownerId     String?
+  owner       Owner?         @relation(fields: [ownerId], references: [id])
+  managerId   String?
+  manager     User?          @relation("PropertyManager", fields: [managerId], references: [id], onDelete: SetNull)
+  createdById String?
+  createdBy   User?          @relation("PropertyCreator", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?          @relation("PropertyUpdater", fields: [updatedById], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  expectedAvailability DateTime?
+  prefFamily           Boolean   @default(true)
+  prefMarried          Boolean   @default(true)
+  prefLiveIn           Boolean   @default(true)
+  prefStudents         Boolean   @default(true)
+  prefProfessionals    Boolean   @default(true)
+  prefPetFriendly      Boolean   @default(true)
+  prefVegetarian       Boolean   @default(false)
+  prefSmokingAllowed   Boolean   @default(false)
+  furnishedStatus      String?   // FULLY, SEMI, UNFURNISHED
+  occupancyType        String?   // FAMILY, BACHELOR, ANY
+
+  buildings         Building[]
+  expenses          Expense[]
+  propertyHistories PropertyHistory[]
+  applications      PropertyApplication[]
+
+  @@index([companyId])
+  @@index([status])
+  @@index([companyId, status])
+  @@map("properties")
+}
+
+model Building {
+  id          String   @id @default(cuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  name        String
+  code        String?
+  description String?
+  totalFloors Int?     @default(1)
+  totalUnits  Int      @default(0)
+  yearBuilt   Int?
+  amenities   Json?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  units Unit[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([propertyId])
+  @@map("buildings")
+}
+
+enum UnitStatus {
+  VACANT
+  OCCUPIED
+  MAINTENANCE
+  RESERVED
+  UNLISTED
+  AVAILABLE_SOON
+}
+
+model Unit {
+  id            String     @id @default(cuid())
+  companyId     String
+  company       Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  buildingId    String
+  building      Building   @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  status        UnitStatus @default(VACANT)
+  floorNumber   Int?
+  bedrooms      Int        @default(0)
+  bathrooms     Int        @default(0)
+  squareFootage Int?
+  rentAmount    Float?     @default(0)
+  depositAmount Float?     @default(0)
+  amenities     Json?
+  metadata      Json?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+
+  leases             Lease[]
+  maintenanceRequests MaintenanceRequest[]
+  invoices           Invoice[]
+  applications       PropertyApplication[]
+
+  @@unique([companyId, buildingId, name])
+  @@index([companyId])
+  @@index([buildingId])
+  @@index([status])
+  @@index([companyId, status])
+  @@map("units")
+}
+
+// ─── Lease Module ────────────────────────────────────────────────────────────
+
+enum LeaseStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  RENEWED
+  DRAFT
+}
+
+model Lease {
+  id            String      @id @default(cuid())
+  companyId     String
+  company       Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  unitId        String
+  unit          Unit        @relation(fields: [unitId], references: [id])
+  tenantId      String
+  tenant        Tenant      @relation(fields: [tenantId], references: [id])
+  startDate     DateTime
+  endDate       DateTime?
+  rentAmount    Float
+  depositAmount Float       @default(0)
+  securityDeposit Float     @default(0)
+  status        LeaseStatus @default(DRAFT)
+  paymentDay    Int         @default(1)
+  lateFeePercent Float      @default(0)
+  lateFeeFlat   Float       @default(0)
+  leaseTerms    Json?
+  documents     Json?
+  notes         String?
+  renewedFromId String?
+  renewedToId   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  invoices           Invoice[]
+  leaseLifecycle     LeaseLifecycle?
+  responsibilities   Responsibility[]
+  reviews            Review[]
+
+  @@index([companyId])
+  @@index([unitId])
+  @@index([tenantId])
+  @@index([status])
+  @@map("leases")
+}
+
+// ─── Finance Module ──────────────────────────────────────────────────────────
+
+enum InvoiceCategory {
+  RENT
+  UTILITIES
+  CORPORATION_TAX
+  OTHER
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  PARTIAL
+  OVERDUE
+  CANCELLED
+  DRAFT
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  BANK_TRANSFER
+  CREDIT_CARD
+  DEBIT_CARD
+  ONLINE
+  OTHER
+}
+
+enum ExpenseCategory {
+  REPAIRS
+  MAINTENANCE
+  UTILITIES
+  INSURANCE
+  TAXES
+  MANAGEMENT
+  MARKETING
+  CLEANING
+  LANDSCAPING
+  SECURITY
+  HOA
+  OTHER
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  companyId     String
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  leaseId       String
+  lease         Lease         @relation(fields: [leaseId], references: [id])
+  unitId        String
+  unit          Unit          @relation(fields: [unitId], references: [id])
+  tenantId      String
+  tenant        Tenant        @relation(fields: [tenantId], references: [id])
+  invoiceNumber String        @unique
+  periodStart   DateTime
+  periodEnd     DateTime
+  dueDate       DateTime
+  rentAmount    Float
+  lateFee       Float         @default(0)
+  otherCharges  Float         @default(0)
+  totalAmount   Float
+  paidAmount    Float         @default(0)
+  balanceDue    Float
+  status        InvoiceStatus @default(DRAFT)
+  category      InvoiceCategory @default(RENT)
+  paidAt        DateTime?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  payments Payment[]
+
+  @@index([companyId])
+  @@index([leaseId])
+  @@index([unitId])
+  @@index([tenantId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("invoices")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  companyId     String
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoiceId     String
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  amount        Float
+  paymentDate   DateTime      @default(now())
+  paymentMethod PaymentMethod @default(ONLINE)
+  reference     String?
+  notes         String?
+  receipt       String?
+  createdAt     DateTime        @default(now())
+  deletedAt     DateTime?
+
+  @@index([companyId])
+  @@index([invoiceId])
+  @@map("payments")
+}
+
+model Expense {
+  id          String          @id @default(cuid())
+  companyId   String
+  company     Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  propertyId  String?
+  property    Property?       @relation(fields: [propertyId], references: [id])
+  category    ExpenseCategory @default(OTHER)
+  amount      Float
+  description String?
+  expenseDate DateTime        @default(now())
+  vendor      String?
+  receipt     String?
+  notes       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deletedAt   DateTime?
+
+  @@index([companyId])
+  @@index([propertyId])
+  @@index([category])
+  @@index([expenseDate])
+  @@map("expenses")
+}
+
+// ─── OTP Login (phone-first Manager/Tenant accounts) ─────────────────────────
+
+model OtpCode {
+  id         String    @id @default(cuid())
+  phone      String
+  codeHash   String
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone])
+  @@map("otp_codes")
+}
+
+// ─── Password Reset Module ───────────────────────────────────────────────────
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([tokenHash])
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+// ─── Maintenance Module ──────────────────────────────────────────────────────
+
+enum TicketCategory {
+  MAINTENANCE
+  QUERY
+}
+
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MaintenanceStatus {
+  SUBMITTED
+  ACKNOWLEDGED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+enum VendorSpecialty {
+  PLUMBING
+  ELECTRICAL
+  HVAC
+  GENERAL
+  PAINTING
+  ROOFING
+  LANDSCAPING
+  CLEANING
+  PEST_CONTROL
+  SECURITY
+  OTHER
+}
+
+model MaintenanceRequest {
+  id            String              @id @default(cuid())
+  companyId     String
+  company       Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  unitId        String?
+  unit          Unit?               @relation(fields: [unitId], references: [id])
+  tenantId      String?
+  tenant        Tenant?             @relation(fields: [tenantId], references: [id])
+  title         String
+  description   String?
+  category      TicketCategory      @default(MAINTENANCE)
+  priority      MaintenancePriority @default(MEDIUM)
+  status        MaintenanceStatus   @default(SUBMITTED)
+  vendorId      String?
+  vendor        Vendor?             @relation(fields: [vendorId], references: [id])
+  assignedTo    String?
+  estimatedCost Float?
+  actualCost    Float?
+  scheduledDate DateTime?
+  completedDate DateTime?
+  images        Json?
+  notes         String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  deletedAt     DateTime?
+
+  @@index([companyId])
+  @@index([unitId])
+  @@index([tenantId])
+  @@index([status])
+  @@index([priority])
+  @@map("maintenance_requests")
+}
+
+model Vendor {
+  id             String           @id @default(cuid())
+  companyId      String
+  company        Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name           String
+  contactPerson  String?
+  email          String?
+  phone          String?
+  address        String?
+  specialty      VendorSpecialty  @default(OTHER)
+  notes          String?
+  isApproved     Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
+
+  maintenanceRequests MaintenanceRequest[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("vendors")
+}
+
+// ─── Property Passport & History ─────────────────────────────────────────────
+
+model PropertyHistory {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  eventType  String   // OWNERSHIP, TENANCY, REPAIR, MAINTENANCE, AGREEMENT, MOVE_IN, MOVE_OUT
+  eventDate  DateTime @default(now())
+  description String
+  metadata   Json?    // To store specific details (e.g. leaseId, cost, document URL, ownerId)
+  createdAt  DateTime @default(now())
+
+  @@index([propertyId])
+  @@map("property_history")
+}
+
+// ─── Rental Lifecycle Checklist ──────────────────────────────────────────────
+
+model LeaseLifecycle {
+  id                      String    @id @default(cuid())
+  leaseId                 String    @unique
+  lease                   Lease     @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  // Move-In Checklist
+  moveInAgreementSigned   Boolean   @default(false)
+  moveInDepositReceived   Boolean   @default(false)
+  moveInKycCompleted      Boolean   @default(false)
+  moveInPhotosUploaded    Boolean   @default(false)
+  moveInKeyHandover       Boolean   @default(false)
+  // Move-Out Checklist
+  moveOutInspection       Boolean   @default(false)
+  moveOutKeyReturn        Boolean   @default(false)
+  moveOutDepositSettlement Boolean   @default(false)
+  moveOutExitDoc          Boolean   @default(false)
+  // Stay tracking / logs
+  communicationLog        Json?     // List of message exchanges
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  @@map("lease_lifecycles")
+}
+
+// ─── Responsibilities Tracker ────────────────────────────────────────────────
+
+enum ResponsibilityStatus {
+  PENDING
+  COMPLETED
+  OVERDUE
+}
+
+model Responsibility {
+  id          String               @id @default(cuid())
+  companyId   String
+  company     Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  leaseId     String
+  lease       Lease                @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  assignedTo  RoleType             // OWNER or TENANT
+  title       String
+  description String?
+  dueDate     DateTime
+  status      ResponsibilityStatus @default(PENDING)
+  reminder    Boolean              @default(false)
+  reminderSentAt DateTime?
+  completedAt DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([leaseId])
+  @@map("responsibilities")
+}
+
+// ─── Interest Queue & Applications ───────────────────────────────────────────
+
+enum ApplicationStatus {
+  PENDING
+  CONTACTED
+  REJECTED
+  ACCEPTED
+}
+
+model PropertyApplication {
+  id                 String            @id @default(cuid())
+  companyId          String
+  company            Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  propertyId         String
+  property           Property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  unitId             String?
+  unit               Unit?             @relation(fields: [unitId], references: [id])
+  tenantId           String
+  tenant             Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  status             ApplicationStatus @default(PENDING)
+  compatibilityScore Float             @default(0.0)
+  isWaitingList      Boolean           @default(false) // True if Available Soon waiting list
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  @@index([propertyId])
+  @@index([tenantId])
+  @@map("property_applications")
+}
+
+// ─── Blind Ratings & Reputation ──────────────────────────────────────────────
+
+model Review {
+  id            String   @id @default(cuid())
+  companyId     String
+  company       Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  leaseId       String
+  lease         Lease    @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  authorId      String   // User id (either tenant user or owner user)
+  targetType    String   // TENANT, OWNER, PROPERTY, COMMUNITY
+  targetId      String   // Tenant id, Owner id, Property id, or Lease id for Community
+  scores        Json     // Key-value score details for the categories
+  comment       String?
+  submittedAt   DateTime @default(now())
+  visibleAfter  DateTime // Date after which rating is unblinded
+  isUnblinded   Boolean  @default(false)
+
+  @@index([leaseId])
+  @@map("reviews")
+}
+

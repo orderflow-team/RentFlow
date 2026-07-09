@@ -1,0 +1,238 @@
+import { MaintenanceService } from './maintenance.service';
+import { CreateRequestDto } from './dto/create-request.dto';
+import { CreateVendorDto } from './dto/create-vendor.dto';
+import { UpdateVendorDto } from './dto/update-vendor.dto';
+import type { JwtPayload } from '../common/enums/role.enum';
+import { MaintenanceStatus } from '@prisma/client';
+export declare class MaintenanceController {
+    private readonly service;
+    constructor(service: MaintenanceService);
+    createRequest(u: JwtPayload, dto: CreateRequestDto): Promise<{
+        id: string;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        description: string | null;
+        images: import("@prisma/client/runtime/client").JsonValue | null;
+        notes: string | null;
+        unitId: string | null;
+        tenantId: string | null;
+        category: import("@prisma/client").$Enums.TicketCategory;
+        title: string;
+        priority: import("@prisma/client").$Enums.MaintenancePriority;
+        vendorId: string | null;
+        assignedTo: string | null;
+        estimatedCost: number | null;
+        actualCost: number | null;
+        scheduledDate: Date | null;
+        completedDate: Date | null;
+    }>;
+    findAllRequests(u: JwtPayload, status?: string, priority?: string, page?: number, limit?: number): Promise<{
+        data: ({
+            tenant: {
+                firstName: string;
+                lastName: string;
+            } | null;
+            unit: {
+                name: string;
+            } | null;
+            vendor: {
+                name: string;
+            } | null;
+        } & {
+            id: string;
+            status: import("@prisma/client").$Enums.MaintenanceStatus;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            companyId: string;
+            description: string | null;
+            images: import("@prisma/client/runtime/client").JsonValue | null;
+            notes: string | null;
+            unitId: string | null;
+            tenantId: string | null;
+            category: import("@prisma/client").$Enums.TicketCategory;
+            title: string;
+            priority: import("@prisma/client").$Enums.MaintenancePriority;
+            vendorId: string | null;
+            assignedTo: string | null;
+            estimatedCost: number | null;
+            actualCost: number | null;
+            scheduledDate: Date | null;
+            completedDate: Date | null;
+        })[];
+        meta: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    findOneRequest(u: JwtPayload, id: string): Promise<{
+        tenant: {
+            id: string;
+            email: string;
+            phone: string | null;
+            status: import("@prisma/client").$Enums.TenantStatus;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            firstName: string;
+            lastName: string;
+            companyId: string;
+            userId: string | null;
+            notes: string | null;
+            emergencyContact: import("@prisma/client/runtime/client").JsonValue | null;
+            documents: import("@prisma/client/runtime/client").JsonValue | null;
+            trustScore: number;
+            verifiedStaysCount: number;
+            averageRating: number;
+            isReputationPublic: boolean;
+        } | null;
+        unit: {
+            id: string;
+            name: string;
+            status: import("@prisma/client").$Enums.UnitStatus;
+            metadata: import("@prisma/client/runtime/client").JsonValue | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            companyId: string;
+            description: string | null;
+            amenities: import("@prisma/client/runtime/client").JsonValue | null;
+            buildingId: string;
+            floorNumber: number | null;
+            bedrooms: number;
+            bathrooms: number;
+            squareFootage: number | null;
+            rentAmount: number | null;
+            depositAmount: number | null;
+        } | null;
+        vendor: {
+            id: string;
+            name: string;
+            email: string | null;
+            phone: string | null;
+            address: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            companyId: string;
+            notes: string | null;
+            contactPerson: string | null;
+            specialty: import("@prisma/client").$Enums.VendorSpecialty;
+            isApproved: boolean;
+        } | null;
+    } & {
+        id: string;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        description: string | null;
+        images: import("@prisma/client/runtime/client").JsonValue | null;
+        notes: string | null;
+        unitId: string | null;
+        tenantId: string | null;
+        category: import("@prisma/client").$Enums.TicketCategory;
+        title: string;
+        priority: import("@prisma/client").$Enums.MaintenancePriority;
+        vendorId: string | null;
+        assignedTo: string | null;
+        estimatedCost: number | null;
+        actualCost: number | null;
+        scheduledDate: Date | null;
+        completedDate: Date | null;
+    }>;
+    updateStatus(u: JwtPayload, id: string, status: MaintenanceStatus, actualCost?: number): Promise<{
+        id: string;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        description: string | null;
+        images: import("@prisma/client/runtime/client").JsonValue | null;
+        notes: string | null;
+        unitId: string | null;
+        tenantId: string | null;
+        category: import("@prisma/client").$Enums.TicketCategory;
+        title: string;
+        priority: import("@prisma/client").$Enums.MaintenancePriority;
+        vendorId: string | null;
+        assignedTo: string | null;
+        estimatedCost: number | null;
+        actualCost: number | null;
+        scheduledDate: Date | null;
+        completedDate: Date | null;
+    }>;
+    removeRequest(u: JwtPayload, id: string): Promise<{
+        message: string;
+    }>;
+    createVendor(u: JwtPayload, dto: CreateVendorDto): Promise<{
+        id: string;
+        name: string;
+        email: string | null;
+        phone: string | null;
+        address: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        notes: string | null;
+        contactPerson: string | null;
+        specialty: import("@prisma/client").$Enums.VendorSpecialty;
+        isApproved: boolean;
+    }>;
+    findAllVendors(u: JwtPayload): Promise<{
+        id: string;
+        name: string;
+        email: string | null;
+        phone: string | null;
+        address: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        notes: string | null;
+        contactPerson: string | null;
+        specialty: import("@prisma/client").$Enums.VendorSpecialty;
+        isApproved: boolean;
+    }[]>;
+    findOneVendor(u: JwtPayload, id: string): Promise<{
+        id: string;
+        name: string;
+        email: string | null;
+        phone: string | null;
+        address: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        notes: string | null;
+        contactPerson: string | null;
+        specialty: import("@prisma/client").$Enums.VendorSpecialty;
+        isApproved: boolean;
+    }>;
+    updateVendor(u: JwtPayload, id: string, dto: UpdateVendorDto): Promise<{
+        id: string;
+        name: string;
+        email: string | null;
+        phone: string | null;
+        address: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        companyId: string;
+        notes: string | null;
+        contactPerson: string | null;
+        specialty: import("@prisma/client").$Enums.VendorSpecialty;
+        isApproved: boolean;
+    }>;
+    removeVendor(u: JwtPayload, id: string): Promise<{
+        message: string;
+    }>;
+}
