@@ -921,6 +921,7 @@ export class AppService {
         </form>
       </div>
 
+      ${process.env.NODE_ENV !== 'production' ? `
       <div class="demo-creds" style="margin-top: 1.5rem; text-align: left; padding: 1rem; background: #faf6f1; border: 1px solid #e4e4e7; border-radius: 8px;">
         <strong style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: #71717a; text-transform: uppercase; letter-spacing: 0.05em;">Auto-fill Demo Roles</strong>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
@@ -930,6 +931,7 @@ export class AppService {
           <a href="#" onclick="fillCreds('owner@demo.local', 'Demo@1234'); return false;" style="font-size: 0.8rem; padding: 0.35rem 0.6rem; background: white; border: 1px solid #e4e4e7; border-radius: 4px; color: #18181b; text-decoration: none; font-weight: 500; transition: all 0.15s; display: inline-block;">Owner</a>
         </div>
       </div>
+      ` : ''}
 
       <div class="footer-text">
         <a href="/admin/login">Admin access</a>
