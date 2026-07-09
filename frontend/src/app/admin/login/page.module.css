@@ -1,0 +1,134 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(600px 400px at 20% 10%, rgba(99, 102, 241, 0.16), transparent 60%),
+    radial-gradient(500px 400px at 85% 90%, rgba(139, 92, 246, 0.12), transparent 60%),
+    #08090f;
+  color: #fafafa;
+  padding: 2rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 396px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl);
+  padding: 2.25rem;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: rf-scale-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.header h1 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.header p {
+  color: #9aa0b4;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1.6rem;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #b6bacb;
+  margin-bottom: 0.4rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fafafa;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input::placeholder {
+  color: #6f7490;
+}
+
+.field input:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+}
+
+.errorMsg {
+  font-size: 0.82rem;
+  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.14);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+.demoBox {
+  margin-top: 1.6rem;
+  padding: 1rem 1.1rem;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: var(--radius-lg);
+  font-size: 0.78rem;
+  color: #9aa0b4;
+}
+
+.demoBox strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #e3e5f0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.demoBtn {
+  font-size: 0.79rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: #e3e5f0;
+  font-weight: 550;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.demoBtn:hover {
+  border-color: var(--brand-400);
+  background: rgba(99, 102, 241, 0.15);
+}
+
+.footerLinks {
+  text-align: center;
+  margin-top: 1.6rem;
+}
+
+.footerLinks a {
+  color: #6f7490;
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.footerLinks a:hover {
+  color: #e3e5f0;
+}

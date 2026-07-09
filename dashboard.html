@@ -165,6 +165,16 @@
     <a href="/" class="brand"><span class="m">RF</span> RentFlow</a>
     <div class="user-area">
       <span class="email" id="userEmail">Loading...</span>
+      
+      <!-- Demo Mode Switcher -->
+      <select id="demoRoleSwitcher" class="btn-sm btn-secondary" style="margin-right: 8px; border-radius: 6px; padding: 0.2rem 0.5rem; outline: none; cursor: pointer; border-color: #e4e4e7;">
+        <option value="">(Real Role)</option>
+        <option value="ADMIN">View as Admin</option>
+        <option value="MANAGER">View as Manager</option>
+        <option value="OWNER">View as Owner</option>
+        <option value="TENANT">View as Tenant</option>
+      </select>
+
       <span class="role-badge" id="roleBadge">—</span>
       <button class="btn-logout" id="logoutBtn">Sign out</button>
     </div>
@@ -212,26 +222,50 @@
     if (!token) { window.location.href = '/login'; return; }
 
     function h(s) { return String(s).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+    
+    var currentUser = null; // Cache user for role switching
+
+    // Listen to Demo Mode Switcher
+    document.getElementById('demoRoleSwitcher').addEventListener('change', function(e) {
+      if (!currentUser) return;
+      var selectedRole = e.target.value;
+      if (selectedRole) {
+        // Override with demo role
+        renderDashboardView(currentUser, [selectedRole], selectedRole + ' (Demo)');
+      } else {
+        // Fallback to real role
+        var realRoles = (currentUser.roles || []).map(function(r) { return typeof r === 'string' ? r : (r.type || r.name); });
+        var displayRole = realRoles.includes('ADMIN') ? 'Admin' : realRoles.includes('MANAGER') ? 'Manager' : realRoles.includes('ACCOUNTANT') ? 'Accountant' : realRoles.includes('OWNER') ? 'Owner' : realRoles.includes('TENANT') ? 'Tenant' : realRoles[0] || 'User';
+        renderDashboardView(currentUser, realRoles, displayRole);
+      }
+    });
+
+    function renderDashboardView(user, roleTypes, displayRole) {
+      document.getElementById('roleBadge').textContent = displayRole;
+
+      var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER' || r === 'ACCOUNTANT'; });
+      var isTenant = roleTypes.includes('TENANT');
+      var isOwner = roleTypes.includes('OWNER');
+
+      if (isStaff) { renderStaffDashboard(user); }
+      else if (isTenant) { renderTenantDashboard(user); }
+      else if (isOwner) { renderOwnerDashboard(user); }
+      else { renderStaffDashboard(user); }
+    }
 
     async function loadDashboard() {
       try {
         var res = await fetch('/api/v1/auth/profile', { headers: { 'Authorization': 'Bearer ' + token } });
         if (res.status === 401) { localStorage.removeItem('accessToken'); localStorage.removeItem('refreshToken'); window.location.href = '/login'; return; }
         var user = await res.json();
+        currentUser = user; // Save for switcher
 
         document.getElementById('userEmail').textContent = user.email;
         var roleTypes = (user.roles || []).map(function(r) { return typeof r === 'string' ? r : (r.type || r.name); });
         var displayRole = roleTypes.includes('ADMIN') ? 'Admin' : roleTypes.includes('MANAGER') ? 'Manager' : roleTypes.includes('ACCOUNTANT') ? 'Accountant' : roleTypes.includes('OWNER') ? 'Owner' : roleTypes.includes('TENANT') ? 'Tenant' : roleTypes[0] || 'User';
-        document.getElementById('roleBadge').textContent = displayRole;
-
-        var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER' || r === 'ACCOUNTANT'; });
-        var isTenant = roleTypes.includes('TENANT');
-        var isOwner = roleTypes.includes('OWNER');
-
-        if (isStaff) { renderStaffDashboard(user); }
-        else if (isTenant) { renderTenantDashboard(user); }
-        else if (isOwner) { renderOwnerDashboard(user); }
-        else { renderStaffDashboard(user); }
+        
+        // Render initial view based on actual role
+        renderDashboardView(user, roleTypes, displayRole);
       } catch(e) {
         document.getElementById('dashContent').innerHTML = '<div class="loading"><p style="font-size:.85rem;color:#71717a">Could not load dashboard. <a href="/login" style="color:#18181b;font-weight:500">Sign in again.</a></p></div>';
       }

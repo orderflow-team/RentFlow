@@ -45,9 +45,9 @@ export declare class DiscoveryService {
     }[]>;
     joinWaitlist(companyId: string, propertyId: string, tenantEmail: string): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.ApplicationStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ApplicationStatus;
         companyId: string;
         propertyId: string;
         unitId: string | null;

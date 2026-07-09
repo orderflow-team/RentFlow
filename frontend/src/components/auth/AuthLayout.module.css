@@ -1,0 +1,303 @@
+.pageWrap {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---------- Brand side ---------- */
+
+.brandSide {
+  display: none;
+  position: relative;
+  width: 46%;
+  max-width: 640px;
+  background: var(--shell-bg);
+  color: white;
+  padding: 2.75rem 3rem;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  filter: blur(70px);
+}
+
+.aurora span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+.blob1 {
+  width: 480px;
+  height: 480px;
+  top: -12%;
+  left: -18%;
+  background: radial-gradient(circle, #4f46e5, transparent 68%);
+  animation: rf-aurora 16s ease-in-out infinite;
+}
+
+.blob2 {
+  width: 420px;
+  height: 420px;
+  bottom: -10%;
+  right: -18%;
+  background: radial-gradient(circle, #7c3aed, transparent 68%);
+  animation: rf-aurora 20s ease-in-out infinite reverse;
+}
+
+.blob3 {
+  width: 300px;
+  height: 300px;
+  top: 42%;
+  left: 38%;
+  background: radial-gradient(circle, #2563eb, transparent 70%);
+  opacity: 0.35;
+  animation: rf-aurora 24s ease-in-out infinite;
+}
+
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black 30%, transparent 75%);
+}
+
+.brandTop {
+  position: relative;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.logoMark {
+  background: var(--brand-gradient);
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.74rem;
+  font-weight: 800;
+  box-shadow: 0 4px 14px var(--brand-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- Floating showcase ---------- */
+
+.showcase {
+  position: relative;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.glassCard {
+  width: 100%;
+  max-width: 360px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 1.25rem 1.35rem;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  animation: rf-float 7s ease-in-out infinite;
+}
+
+.glassCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+}
+
+.glassDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+}
+
+.glassStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+.glassStatValue {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.glassStatLabel {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.15rem;
+}
+
+.glassBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  height: 64px;
+}
+
+.glassBars span {
+  flex: 1;
+  border-radius: 5px 5px 2px 2px;
+  background: linear-gradient(180deg, #8b8dff, rgba(99, 102, 241, 0.35));
+  min-height: 12px;
+}
+
+.glassBars span:nth-child(6) {
+  background: linear-gradient(180deg, #a78bfa, #8b5cf6);
+  box-shadow: 0 0 16px var(--brand-glow);
+}
+
+.glassChip,
+.glassChipAlt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 550;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.glassChip {
+  align-self: flex-start;
+  margin-left: 8%;
+  animation: rf-float 8s ease-in-out infinite 0.8s;
+}
+
+.glassChipAlt {
+  align-self: flex-end;
+  margin-right: 6%;
+  animation: rf-float 9s ease-in-out infinite 1.6s;
+}
+
+.chipCheck {
+  color: #34d399;
+  font-weight: 700;
+}
+
+.chipSpark {
+  color: #fbbf24;
+}
+
+/* ---------- Testimonial ---------- */
+
+.brandBottom {
+  position: relative;
+}
+
+.stars {
+  color: #fbbf24;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 0.7rem;
+}
+
+.quote {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  max-width: 420px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.1rem;
+}
+
+.authorAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--brand-glow);
+}
+
+.authorName {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.authorRole {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Form side ---------- */
+
+.formSide {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background:
+    radial-gradient(700px 400px at 80% -10%, rgba(139, 92, 246, 0.07), transparent 60%),
+    radial-gradient(600px 400px at 10% 110%, rgba(99, 102, 241, 0.06), transparent 60%),
+    #fbfbfe;
+}
+
+.formWrap {
+  width: 100%;
+  max-width: 396px;
+  animation: rf-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 900px) {
+  .brandSide {
+    display: flex;
+  }
+}

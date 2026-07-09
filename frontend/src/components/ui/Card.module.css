@@ -1,0 +1,18 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.clickable {
+  cursor: pointer;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.clickable:hover {
+  border-color: var(--brand-300);
+  box-shadow: var(--shadow-md), 0 0 0 4px var(--brand-ring);
+  transform: translateY(-2px);
+}

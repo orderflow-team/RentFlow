@@ -1,0 +1,31 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+  align-items: center;
+}
+
+.bar select,
+.bar input {
+  padding: 0.52rem 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  font-size: 0.82rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  outline: none;
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bar select:hover,
+.bar input:hover {
+  border-color: #c6cadc;
+}
+
+.bar select:focus,
+.bar input:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 4px var(--brand-ring);
+}

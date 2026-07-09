@@ -10,14 +10,14 @@ export declare class MaintenanceService {
     private getScopedWhereClause;
     createRequest(companyId: string, user: JwtPayload, dto: CreateRequestDto): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.MaintenanceStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
         deletedAt: Date | null;
         companyId: string;
         description: string | null;
-        images: import("@prisma/client/runtime/client").JsonValue | null;
         notes: string | null;
+        images: import("@prisma/client/runtime/client").JsonValue | null;
         unitId: string | null;
         tenantId: string | null;
         category: import("@prisma/client").$Enums.TicketCategory;
@@ -49,14 +49,14 @@ export declare class MaintenanceService {
             } | null;
         } & {
             id: string;
-            status: import("@prisma/client").$Enums.MaintenanceStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.MaintenanceStatus;
             deletedAt: Date | null;
             companyId: string;
             description: string | null;
-            images: import("@prisma/client/runtime/client").JsonValue | null;
             notes: string | null;
+            images: import("@prisma/client/runtime/client").JsonValue | null;
             unitId: string | null;
             tenantId: string | null;
             category: import("@prisma/client").$Enums.TicketCategory;
@@ -79,11 +79,11 @@ export declare class MaintenanceService {
     findOneRequest(companyId: string, id: string, user: JwtPayload): Promise<{
         tenant: {
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
             email: string;
             phone: string | null;
             status: import("@prisma/client").$Enums.TenantStatus;
-            createdAt: Date;
-            updatedAt: Date;
             deletedAt: Date | null;
             firstName: string;
             lastName: string;
@@ -100,10 +100,10 @@ export declare class MaintenanceService {
         unit: {
             id: string;
             name: string;
-            status: import("@prisma/client").$Enums.UnitStatus;
-            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.UnitStatus;
+            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             deletedAt: Date | null;
             companyId: string;
             description: string | null;
@@ -119,11 +119,11 @@ export declare class MaintenanceService {
         vendor: {
             id: string;
             name: string;
+            createdAt: Date;
+            updatedAt: Date;
             email: string | null;
             phone: string | null;
             address: string | null;
-            createdAt: Date;
-            updatedAt: Date;
             deletedAt: Date | null;
             companyId: string;
             notes: string | null;
@@ -133,14 +133,14 @@ export declare class MaintenanceService {
         } | null;
     } & {
         id: string;
-        status: import("@prisma/client").$Enums.MaintenanceStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
         deletedAt: Date | null;
         companyId: string;
         description: string | null;
-        images: import("@prisma/client/runtime/client").JsonValue | null;
         notes: string | null;
+        images: import("@prisma/client/runtime/client").JsonValue | null;
         unitId: string | null;
         tenantId: string | null;
         category: import("@prisma/client").$Enums.TicketCategory;
@@ -155,14 +155,14 @@ export declare class MaintenanceService {
     }>;
     updateStatus(companyId: string, id: string, user: JwtPayload, status: MaintenanceStatus, actualCost?: number): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.MaintenanceStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.MaintenanceStatus;
         deletedAt: Date | null;
         companyId: string;
         description: string | null;
-        images: import("@prisma/client/runtime/client").JsonValue | null;
         notes: string | null;
+        images: import("@prisma/client/runtime/client").JsonValue | null;
         unitId: string | null;
         tenantId: string | null;
         category: import("@prisma/client").$Enums.TicketCategory;
@@ -181,11 +181,11 @@ export declare class MaintenanceService {
     createVendor(companyId: string, dto: CreateVendorDto): Promise<{
         id: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
         email: string | null;
         phone: string | null;
         address: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         deletedAt: Date | null;
         companyId: string;
         notes: string | null;
@@ -196,11 +196,11 @@ export declare class MaintenanceService {
     findOneVendor(companyId: string, id: string): Promise<{
         id: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
         email: string | null;
         phone: string | null;
         address: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         deletedAt: Date | null;
         companyId: string;
         notes: string | null;
@@ -211,11 +211,11 @@ export declare class MaintenanceService {
     updateVendor(companyId: string, id: string, dto: UpdateVendorDto): Promise<{
         id: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
         email: string | null;
         phone: string | null;
         address: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         deletedAt: Date | null;
         companyId: string;
         notes: string | null;
@@ -226,11 +226,11 @@ export declare class MaintenanceService {
     findAllVendors(companyId: string): Promise<{
         id: string;
         name: string;
+        createdAt: Date;
+        updatedAt: Date;
         email: string | null;
         phone: string | null;
         address: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         deletedAt: Date | null;
         companyId: string;
         notes: string | null;

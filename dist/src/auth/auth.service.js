@@ -68,15 +68,21 @@ let AuthService = AuthService_1 = class AuthService {
         this.smsService = smsService;
     }
     async register(dto) {
-        const existingUser = await this.prisma.user.findUnique({
-            where: { email: dto.email },
-        });
-        if (existingUser) {
-            throw new common_1.ConflictException('Email already registered');
-        }
-        const passwordHash = await bcrypt.hash(dto.password, 12);
-        const result = await this.prisma.$transaction(async (tx) => {
-            const company = await tx.company.create({
+        try {
+            const existingUser = await this.prisma.user.findUnique({
+                where: { email: dto.email },
+            });
+            if (existingUser) {
+                throw new common_1.ConflictException('Email already registered');
+            }
+            const passwordHash = await bcrypt.hash(dto.password, 12);
+            const adminRole = await this.prisma.role.findUnique({
+                where: { type: role_enum_1.RoleType.ADMIN },
+            });
+            if (!adminRole) {
+                throw new common_1.BadRequestException('System roles not initialized. Run seed first.');
+            }
+            const company = await this.prisma.company.create({
                 data: {
                     name: dto.companyName,
                     slug: dto.companyName
@@ -88,13 +94,7 @@ let AuthService = AuthService_1 = class AuthService {
                     status: 'ACTIVE',
                 },
             });
-            const adminRole = await tx.role.findUnique({
-                where: { type: role_enum_1.RoleType.ADMIN },
-            });
-            if (!adminRole) {
-                throw new common_1.BadRequestException('System roles not initialized. Run seed first.');
-            }
-            const user = await tx.user.create({
+            const user = await this.prisma.user.create({
                 data: {
                     email: dto.email,
                     passwordHash,
@@ -106,30 +106,36 @@ let AuthService = AuthService_1 = class AuthService {
                     companyId: company.id,
                 },
             });
-            await tx.userRole.create({
+            await this.prisma.userRole.create({
                 data: {
                     userId: user.id,
                     roleId: adminRole.id,
                     companyId: company.id,
                 },
             });
-            return { company, user };
-        });
-        const tokens = await this.generateTokens(result.user.id, result.user.email, result.company.id);
-        return {
-            company: {
-                id: result.company.id,
-                name: result.company.name,
-                slug: result.company.slug,
-            },
-            user: {
-                id: result.user.id,
-                email: result.user.email,
-                firstName: result.user.firstName,
-                lastName: result.user.lastName,
-            },
-            ...tokens,
-        };
+            const result = { company, user };
+            const tokens = await this.generateTokens(result.user.id, result.user.email, result.company.id);
+            return {
+                company: {
+                    id: result.company.id,
+                    name: result.company.name,
+                    slug: result.company.slug,
+                },
+                user: {
+                    id: result.user.id,
+                    email: result.user.email,
+                    firstName: result.user.firstName,
+                    lastName: result.user.lastName,
+                },
+                ...tokens,
+            };
+        }
+        catch (e) {
+            if (e instanceof common_1.ConflictException || e instanceof common_1.BadRequestException) {
+                throw e;
+            }
+            throw new common_1.InternalServerErrorException(e.stack || e.message);
+        }
     }
     async login(dto) {
         const user = await this.prisma.user.findUnique({

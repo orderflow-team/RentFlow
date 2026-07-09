@@ -12,9 +12,9 @@ export declare class ResponsibilitiesService {
         reminder?: boolean;
     }): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         companyId: string;
         description: string | null;
         leaseId: string;
@@ -27,9 +27,9 @@ export declare class ResponsibilitiesService {
     }>;
     findAll(companyId: string, leaseId: string, assignedTo?: RoleType): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         companyId: string;
         description: string | null;
         leaseId: string;
@@ -42,9 +42,9 @@ export declare class ResponsibilitiesService {
     }[]>;
     findOne(companyId: string, id: string): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         companyId: string;
         description: string | null;
         leaseId: string;
@@ -60,9 +60,9 @@ export declare class ResponsibilitiesService {
         completed?: boolean;
     }): Promise<{
         id: string;
-        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.ResponsibilityStatus;
         companyId: string;
         description: string | null;
         leaseId: string;

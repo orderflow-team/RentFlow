@@ -782,83 +782,102 @@ let AppService = AppService_1 = class AppService {
     *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:'Inter',-apple-system,sans-serif;
-      background:#fafafa;color:#18181b;line-height:1.6;
+      background:#0a0a0b;color:#fafafa;line-height:1.6;
       -webkit-font-smoothing:antialiased;
-      min-height:100vh;display:flex;flex-direction:column
+      min-height:100vh;display:flex;flex-direction:column;
     }
-    .page-wrap{display:flex;min-height:100vh}
+    .check-grid-bg{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      background-color: #0b0814;
+    }
+    .check-grid-glow{
+      position:absolute;top:50%;left:20%;transform:translateY(-50%);
+      width:800px;height:800px;
+      background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 60%);
+      pointer-events:none;z-index:0;
+    }
+    .page-wrap{display:flex;min-height:100vh;position:relative;z-index:1}
     .brand-side{
       display:none;flex:1;
-      background:#18181b;color:white;
-      padding:3rem;flex-direction:column;justify-content:space-between
+      background:transparent;color:white;
+      padding:4rem;flex-direction:column;justify-content:space-between
     }
-    .brand-side .logo{font-weight:700;font-size:1.2rem;letter-spacing:-0.02em}
-    .brand-side .quote{font-size:.9rem;color:#a1a1aa;max-width:300px;line-height:1.7}
-    .brand-side .author{font-size:.8rem;color:#52525b;margin-top:.5rem}
+    .brand-side .logo{font-weight:700;font-size:1.5rem;letter-spacing:-0.02em}
+    .brand-side .quote{font-size:1.1rem;color:#d4d4d8;max-width:380px;line-height:1.7}
+    .brand-side .author{font-size:.9rem;color:#a1a1aa;margin-top:.75rem}
     .form-side{
       flex:1;display:flex;align-items:center;justify-content:center;
-      padding:2rem
+      padding:2rem;background:transparent;
     }
-    .form-wrap{width:100%;max-width:380px}
+    .form-wrap{
+      width:100%;max-width:420px;
+      background:#ffffff;color:#18181b;
+      padding:2.5rem;border-radius:16px;
+      box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+    }
     .form-wrap .rf-logo{
       display:inline-flex;align-items:center;gap:.5rem;
       font-weight:700;font-size:1rem;color:#18181b;
-      text-decoration:none;margin-bottom:2rem
+      text-decoration:none;margin-bottom:1.5rem
     }
     .rf-logo .mark{
       width:28px;height:28px;border-radius:6px;
-      background:#18181b;color:white;
+      background:#6366f1;color:white;
       display:flex;align-items:center;justify-content:center;
       font-size:.65rem;font-weight:700
     }
-    h1{font-size:1.5rem;font-weight:650;letter-spacing:-0.02em;margin-bottom:.35rem}
+    h1{font-size:1.6rem;font-weight:650;letter-spacing:-0.02em;margin-bottom:.35rem;color:#18181b}
     .sub{color:#71717a;font-size:.875rem;margin-bottom:2rem}
-    .sub a{color:#18181b;font-weight:550;text-decoration:none}
+    .sub a{color:#6366f1;font-weight:550;text-decoration:none}
     .sub a:hover{text-decoration:underline}
     .field{margin-bottom:1.25rem}
-    .field label{display:block;font-size:.52rem;font-weight:500;color:#52525b;margin-bottom:.35rem}
+    .field label{display:block;font-size:.82rem;font-weight:500;color:#52525b;margin-bottom:.35rem}
     .field input{
-      width:100%;padding:.65rem .75rem;border-radius:8px;
+      width:100%;padding:.7rem .85rem;border-radius:8px;
       border:1px solid #e4e4e7;font-size:.9rem;font-family:inherit;
-      background:#ffffff;transition:border-color .15s,box-shadow .15s;
-      outline:none
+      background:#fafafa;transition:border-color .15s,box-shadow .15s;
+      outline:none;color:#18181b;
     }
-    .field input:focus{border-color:#18181b;box-shadow:0 0 0 2px rgba(24,24,27,.08)}
+    .field input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15);background:#ffffff}
     .field input.error{border-color:#ef4444}
     .error-msg{
-      font-size:.78rem;color:#ef4444;display:none;
-      background:#fef2f2;padding:.5rem .75rem;border-radius:6px;
-      margin-bottom:1rem;border:1px solid #fecaca
+      font-size:.8rem;color:#ef4444;display:none;
+      background:#fef2f2;padding:.6rem .85rem;border-radius:8px;
+      margin-bottom:1.25rem;border:1px solid #fecaca
     }
     .error-msg.show{display:block}
     .btn-submit{
-      width:100%;padding:.7rem;border-radius:8px;
-      background:#18181b;color:white;font-size:.9rem;font-weight:550;
+      width:100%;padding:.75rem;border-radius:8px;
+      background:#6366f1;color:white;font-size:.9rem;font-weight:550;
       border:none;cursor:pointer;transition:all .15s;
-      font-family:inherit
+      font-family:inherit;margin-top:.5rem;
     }
-    .btn-submit:hover{background:#27272a}
-    .btn-submit:disabled{opacity:.5;cursor:not-allowed}
-    .footer-text{text-align:center;margin-top:1.5rem;font-size:.82rem;color:#a1a1aa}
-    .footer-text a{color:#71717a;text-decoration:none}
+    .btn-submit:hover{background:#4f46e5;transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.2)}
+    .btn-submit:active{transform:translateY(0)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+    .footer-text{text-align:center;margin-top:2rem;font-size:.82rem;color:#a1a1aa}
+    .footer-text a{color:#71717a;text-decoration:none;transition:color .15s}
     .footer-text a:hover{color:#18181b}
     .success-msg{
       font-size:.82rem;color:#16a34a;display:none;
-      background:#f0fdf4;padding:.5rem .75rem;border-radius:6px;
-      margin-bottom:1rem;border:1px solid #bbf7d0
+      background:#f0fdf4;padding:.6rem .85rem;border-radius:8px;
+      margin-bottom:1.25rem;border:1px solid #bbf7d0
     }
     .success-msg.show{display:block}
-    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.35rem}
+    .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.4rem}
     @keyframes spin{to{transform:rotate(360deg)}}
     .demo-creds{
-      margin-top:1.5rem;padding:.75rem;border-radius:8px;
-      background:#f4f4f5;border:1px solid #e4e4e7;font-size:.78rem;color:#52525b
+      margin-top:1.5rem;padding:1rem;border-radius:8px;
+      background:#fafafa;border:1px solid #e4e4e7;font-size:.8rem;color:#52525b
     }
     .demo-creds strong{color:#18181b}
     @media(min-width:768px){.brand-side{display:flex}}
   </style>
 </head>
 <body>
+<div class="check-grid-bg"><div class="check-grid-glow"></div></div>
 <div class="page-wrap">
   <div class="brand-side">
     <div class="logo">RentFlow</div>
@@ -1081,65 +1100,84 @@ let AppService = AppService_1 = class AppService {
     *{margin:0;padding:0;box-sizing:border-box}
     body{
       font-family:'Inter',-apple-system,sans-serif;
-      background:#fafafa;color:#18181b;line-height:1.6;
+      background:#0a0a0b;color:#fafafa;line-height:1.6;
       -webkit-font-smoothing:antialiased;
-      min-height:100vh;display:flex;flex-direction:column
+      min-height:100vh;display:flex;flex-direction:column;
     }
-    .page-wrap{display:flex;min-height:100vh}
+    .check-grid-bg{
+      position:fixed;inset:0;pointer-events:none;z-index:0;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      background-color: #0b0814;
+    }
+    .check-grid-glow{
+      position:absolute;top:50%;left:20%;transform:translateY(-50%);
+      width:800px;height:800px;
+      background:radial-gradient(circle,rgba(99,102,241,0.08) 0%,transparent 60%);
+      pointer-events:none;z-index:0;
+    }
+    .page-wrap{display:flex;min-height:100vh;position:relative;z-index:1}
     .brand-side{
       display:none;flex:1;
-      background:#18181b;color:white;
-      padding:3rem;flex-direction:column;justify-content:space-between
+      background:transparent;color:white;
+      padding:4rem;flex-direction:column;justify-content:space-between
     }
-    .brand-side .logo{font-weight:700;font-size:1.2rem;letter-spacing:-0.02em}
-    .brand-side .features{font-size:.85rem;color:#a1a1aa;line-height:2;list-style:none}
-    .brand-side .features li::before{content:"\\2713 ";color:#22c55e;font-weight:700}
+    .brand-side .logo{font-weight:700;font-size:1.5rem;letter-spacing:-0.02em}
+    .brand-side .quote{font-size:1.1rem;color:#d4d4d8;max-width:380px;line-height:1.7}
+    .brand-side .author{font-size:.9rem;color:#a1a1aa;margin-top:.75rem}
     .form-side{
       flex:1;display:flex;align-items:center;justify-content:center;
-      padding:2rem
+      padding:2rem;background:transparent;
     }
-    .form-wrap{width:100%;max-width:400px}
+    .form-wrap{
+      width:100%;max-width:420px;
+      background:#ffffff;color:#18181b;
+      padding:2.5rem;border-radius:16px;
+      box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+    }
     .form-wrap .rf-logo{
       display:inline-flex;align-items:center;gap:.5rem;
       font-weight:700;font-size:1rem;color:#18181b;
-      text-decoration:none;margin-bottom:2rem
+      text-decoration:none;margin-bottom:1.5rem
     }
     .rf-logo .mark{
       width:28px;height:28px;border-radius:6px;
-      background:#18181b;color:white;
+      background:#6366f1;color:white;
       display:flex;align-items:center;justify-content:center;
       font-size:.65rem;font-weight:700
     }
-    h1{font-size:1.5rem;font-weight:650;letter-spacing:-0.02em;margin-bottom:.35rem}
+    h1{font-size:1.6rem;font-weight:650;letter-spacing:-0.02em;margin-bottom:.35rem;color:#18181b}
     .sub{color:#71717a;font-size:.875rem;margin-bottom:2rem}
-    .sub a{color:#18181b;font-weight:550;text-decoration:none}
+    .sub a{color:#6366f1;font-weight:550;text-decoration:none}
     .sub a:hover{text-decoration:underline}
     .name-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
     .field{margin-bottom:1.25rem}
     .field label{display:block;font-size:.82rem;font-weight:500;color:#52525b;margin-bottom:.35rem}
-    .field input{
-      width:100%;padding:.65rem .75rem;border-radius:8px;
+    .field input, .field select{
+      width:100%;padding:.7rem .85rem;border-radius:8px;
       border:1px solid #e4e4e7;font-size:.9rem;font-family:inherit;
-      background:#ffffff;transition:border-color .15s,box-shadow .15s;
-      outline:none
+      background:#fafafa;transition:border-color .15s,box-shadow .15s;
+      outline:none;color:#18181b;
     }
-    .field input:focus{border-color:#18181b;box-shadow:0 0 0 2px rgba(24,24,27,.08)}
+    .field input:focus, .field select:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.15);background:#ffffff}
+    .field input.error, .field select.error{border-color:#ef4444}
     .error-msg{
-      font-size:.78rem;color:#ef4444;display:none;
-      background:#fef2f2;padding:.5rem .75rem;border-radius:6px;
-      margin-bottom:1rem;border:1px solid #fecaca
+      font-size:.8rem;color:#ef4444;display:none;
+      background:#fef2f2;padding:.6rem .85rem;border-radius:8px;
+      margin-bottom:1.25rem;border:1px solid #fecaca
     }
     .error-msg.show{display:block}
     .btn-submit{
-      width:100%;padding:.7rem;border-radius:8px;
-      background:#18181b;color:white;font-size:.9rem;font-weight:550;
+      width:100%;padding:.75rem;border-radius:8px;
+      background:#6366f1;color:white;font-size:.9rem;font-weight:550;
       border:none;cursor:pointer;transition:all .15s;
-      font-family:inherit
+      font-family:inherit;margin-top:.5rem;
     }
-    .btn-submit:hover{background:#27272a}
-    .btn-submit:disabled{opacity:.5;cursor:not-allowed}
-    .footer-text{text-align:center;margin-top:1.5rem;font-size:.82rem;color:#a1a1aa}
-    .footer-text a{color:#71717a;text-decoration:none}
+    .btn-submit:hover{background:#4f46e5;transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.2)}
+    .btn-submit:active{transform:translateY(0)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+    .footer-text{text-align:center;margin-top:2rem;font-size:.82rem;color:#a1a1aa}
+    .footer-text a{color:#71717a;text-decoration:none;transition:color .15s}
     .footer-text a:hover{color:#18181b}
     .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.35rem}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -1573,6 +1611,7 @@ let AppService = AppService_1 = class AppService {
     <div class="user-section">
       <div class="email" id="sidebarEmail">Loading...</div>
       <div class="role" id="sidebarRole">—</div>
+      <a href="#" id="switchRoleLink" style="display:none;font-size:.75rem;color:#a1a1aa;text-decoration:underline;margin:.15rem 0 .5rem" onclick="switchRole(); return false;">Switch portal</a>
       <button class="logout-btn" id="logoutBtn">Sign out</button>
     </div>
   </div>
@@ -1759,34 +1798,77 @@ let AppService = AppService_1 = class AppService {
   }
 
   /* ── Init ─────────────────────────────────────────────── */
+  function roleLabel(r) {
+    return r === 'ADMIN' ? 'Admin' : r === 'MANAGER' ? 'Manager' : r === 'ACCOUNTANT' ? 'Accountant' : r === 'OWNER' ? 'Owner' : r === 'TENANT' ? 'Tenant' : r;
+  }
+
+  function activateRole(role, allRoles) {
+    roleTypes = [role];
+    document.getElementById('sidebarRole').textContent = roleLabel(role);
+    document.getElementById('navItems').style.display = '';
+    var switchLink = document.getElementById('switchRoleLink');
+    if (switchLink) switchLink.style.display = allRoles.length > 1 ? '' : 'none';
+
+    var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER' || r === 'ACCOUNTANT'; });
+    var isTenant = roleTypes.includes('TENANT');
+    var isOwner = roleTypes.includes('OWNER');
+
+    // Show/hide nav items based on role
+    document.getElementById('navMaintenance').style.display = (isStaff || isOwner) ? '' : 'none';
+    document.getElementById('navVendors').style.display = (isStaff && (roleTypes.includes('ADMIN') || roleTypes.includes('MANAGER'))) ? '' : 'none';
+    document.getElementById('navExplore').style.display = isTenant ? '' : 'none';
+
+    // For non-staff users, hide irrelevant nav items
+    if (!isStaff) {
+      document.querySelectorAll('.nav-item[data-view="properties"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+      document.querySelectorAll('.nav-item[data-view="tenants"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+      document.querySelectorAll('.nav-item[data-view="leases"]').forEach(function(el) { el.style.display = 'none'; });
+      document.querySelectorAll('.nav-item[data-view="finance"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+    }
+
+    renderDashboard();
+  }
+
+  function renderRoleSwitcher(allRoles) {
+    document.getElementById('navItems').style.display = 'none';
+    document.getElementById('sidebarRole').textContent = 'Choose a role';
+    var cards = allRoles.map(function(r) {
+      return '<div class="card" style="cursor:pointer;text-align:center;padding:1.5rem" onclick="chooseRole(\\'' + r + '\\')"><h4 style="margin-bottom:.35rem">' + roleLabel(r) + '</h4><p style="font-size:.8rem;color:#71717a">Continue as ' + roleLabel(r) + '</p></div>';
+    }).join('');
+    setContent(
+      '<div class="page-header"><h2>Choose how to continue</h2><p>Your account has multiple roles. Pick one to enter its dashboard.</p></div>' +
+      '<div class="card-grid">' + cards + '</div>'
+    );
+  }
+
+  window.chooseRole = function(role) {
+    localStorage.setItem('activeRole', role);
+    window.location.reload();
+  };
+
+  window.switchRole = function() {
+    localStorage.removeItem('activeRole');
+    window.location.reload();
+  };
+
   async function init() {
     try {
       var res = await api('/auth/profile');
       if (!res.ok) throw new Error('Unauthorized');
       userData = res.data;
       document.getElementById('sidebarEmail').textContent = userData.email;
-      roleTypes = (userData.roles || []).map(function(r) { return typeof r === 'string' ? r : (r.type || r.name); });
-      var displayRole = roleTypes.includes('ADMIN') ? 'Admin' : roleTypes.includes('MANAGER') ? 'Manager' : roleTypes.includes('ACCOUNTANT') ? 'Accountant' : roleTypes.includes('OWNER') ? 'Owner' : roleTypes.includes('TENANT') ? 'Tenant' : roleTypes[0] || 'User';
-      document.getElementById('sidebarRole').textContent = displayRole;
+      var allRoles = (userData.roles || []).map(function(r) { return typeof r === 'string' ? r : (r.type || r.name); });
 
-      var isStaff = roleTypes.some(function(r) { return r === 'ADMIN' || r === 'MANAGER' || r === 'ACCOUNTANT'; });
-      var isTenant = roleTypes.includes('TENANT');
-      var isOwner = roleTypes.includes('OWNER');
-
-      // Show/hide nav items based on role
-      document.getElementById('navMaintenance').style.display = (isStaff || isOwner) ? '' : 'none';
-      document.getElementById('navVendors').style.display = (isStaff && (roleTypes.includes('ADMIN') || roleTypes.includes('MANAGER'))) ? '' : 'none';
-      document.getElementById('navExplore').style.display = isTenant ? '' : 'none';
-
-      // For non-staff users, hide irrelevant nav items
-      if (!isStaff) {
-        document.querySelectorAll('.nav-item[data-view="properties"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
-        document.querySelectorAll('.nav-item[data-view="tenants"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
-        document.querySelectorAll('.nav-item[data-view="leases"]').forEach(function(el) { el.style.display = 'none'; });
-        document.querySelectorAll('.nav-item[data-view="finance"]').forEach(function(el) { el.style.display = isOwner ? '' : 'none'; });
+      if (allRoles.length > 1) {
+        var stored = localStorage.getItem('activeRole');
+        if (stored && allRoles.indexOf(stored) !== -1) {
+          activateRole(stored, allRoles);
+        } else {
+          renderRoleSwitcher(allRoles);
+        }
+      } else {
+        activateRole(allRoles[0], allRoles);
       }
-
-      renderDashboard();
     } catch(e) {
       setContent('<div class="loading"><p style="font-size:.85rem;color:#71717a">Could not load dashboard. <a href="/login" style="color:#18181b;font-weight:500">Sign in again.</a></p></div>');
     }

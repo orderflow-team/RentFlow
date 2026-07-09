@@ -4,8 +4,8 @@ export declare class PassportService {
     constructor(prisma: PrismaService);
     logEvent(companyId: string, propertyId: string, eventType: string, description: string, metadata?: any): Promise<{
         id: string;
-        metadata: import("@prisma/client/runtime/client").JsonValue | null;
         createdAt: Date;
+        metadata: import("@prisma/client/runtime/client").JsonValue | null;
         description: string;
         propertyId: string;
         eventType: string;
@@ -20,8 +20,8 @@ export declare class PassportService {
         };
         history: {
             id: string;
-            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             createdAt: Date;
+            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             description: string;
             propertyId: string;
             eventType: string;

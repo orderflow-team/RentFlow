@@ -1,0 +1,80 @@
+:root {
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: var(--font-jakarta), var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Brand — violet / indigo spectrum */
+  --brand-50: #f0f1ff;
+  --brand-100: #e2e4ff;
+  --brand-300: #a5a8ff;
+  --brand-400: #8285f4;
+  --brand-500: #6366f1;
+  --brand-600: #5457e8;
+  --brand-700: #4338ca;
+  --brand-violet: #8b5cf6;
+  --brand-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --brand-gradient-hover: linear-gradient(135deg, #5457e8 0%, #7c4ce8 100%);
+  --brand-glow: rgba(99, 102, 241, 0.32);
+  --brand-ring: rgba(99, 102, 241, 0.18);
+
+  /* Surfaces */
+  --bg-app: #f6f7fb;
+  --bg-card: #ffffff;
+  --bg-muted: #f1f2f8;
+  --bg-hover: #f6f6fc;
+
+  /* Text */
+  --text-primary: #12141f;
+  --text-secondary: #3d4152;
+  --text-muted: #676d81;
+  --text-faint: #9aa0b4;
+
+  /* Borders */
+  --border: #e7e9f2;
+  --border-strong: #d8dbe8;
+
+  /* Dark shell (sidebar, admin, auth brand panel) */
+  --shell-bg: #0b0c16;
+  --shell-bg-2: #12142400;
+  --shell-surface: rgba(255, 255, 255, 0.04);
+  --shell-border: rgba(255, 255, 255, 0.08);
+  --shell-text: #c3c7d9;
+  --shell-text-faint: #6f7490;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(18, 20, 31, 0.05);
+  --shadow-sm: 0 1px 2px rgba(18, 20, 31, 0.04), 0 2px 8px rgba(18, 20, 31, 0.04);
+  --shadow-md: 0 2px 4px rgba(18, 20, 31, 0.04), 0 8px 24px rgba(18, 20, 31, 0.07);
+  --shadow-lg: 0 4px 12px rgba(18, 20, 31, 0.06), 0 20px 48px rgba(18, 20, 31, 0.12);
+  --shadow-brand: 0 4px 14px var(--brand-glow);
+
+  /* Status tags */
+  --tag-green-bg: #e8faf0;
+  --tag-green-text: #0e9f5d;
+  --tag-green-border: #c4f0d8;
+  --tag-yellow-bg: #fef7e0;
+  --tag-yellow-text: #b47d0a;
+  --tag-yellow-border: #f7e6b0;
+  --tag-red-bg: #feeeee;
+  --tag-red-text: #dc3545;
+  --tag-red-border: #fad2d4;
+  --tag-blue-bg: #eaf2ff;
+  --tag-blue-text: #2563eb;
+  --tag-blue-border: #cfe0fc;
+  --tag-gray-bg: #f1f2f8;
+  --tag-gray-text: #5b6072;
+  --tag-gray-border: #e2e4ee;
+
+  /* Legacy aliases kept for existing modules */
+  --sidebar-bg: var(--shell-bg);
+  --sidebar-border: var(--shell-border);
+  --sidebar-active-from: #6366f1;
+  --sidebar-active-to: #8b5cf6;
+  --btn-primary-bg: #12141f;
+  --btn-primary-hover: #24273a;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}

@@ -1,0 +1,16 @@
+.main {
+  margin-left: 236px;
+  min-height: 100vh;
+  padding: 2.25rem 2.5rem 3rem;
+  max-width: 1440px;
+  animation: rf-fade-up 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+}

@@ -1,0 +1,65 @@
+.card {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--brand-300);
+  box-shadow: var(--shadow-md), 0 0 0 4px var(--brand-ring);
+  transform: translateY(-3px);
+}
+
+.imgPlaceholder {
+  height: 120px;
+  background:
+    radial-gradient(200px 90px at 85% 15%, rgba(255, 255, 255, 0.35), transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(135deg, #6366f1, #8b5cf6 55%, #a855f7);
+  background-size: auto, 22px 22px, 22px 22px, auto;
+  position: relative;
+  transition: filter 0.2s ease;
+}
+
+.imgPlaceholder::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(11, 12, 22, 0.25));
+}
+
+.card:hover .imgPlaceholder {
+  filter: saturate(1.15) brightness(1.05);
+}
+
+.body {
+  padding: 1rem 1.1rem 1.05rem;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.address {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.meta {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  margin-top: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
