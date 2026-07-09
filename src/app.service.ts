@@ -881,8 +881,7 @@ export class AppService {
     }
     .demo-creds strong{color:#18181b}
     @media(min-width:768px){.brand-side{display:flex}}
-    .glass-card{
-    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:0 auto}
+    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:2rem auto}
     .glass-card-main{
       background:rgba(30,30,36,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
       border:1px solid rgba(255,255,255,0.06);border-radius:20px;
@@ -910,13 +909,122 @@ export class AppService {
       font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:3
     }
     .float-pill.left{bottom:-20px;left:-20px}
-    .float-pill.right{bottom:-80px;right:-20px}
+    .float-pill.right{bottom:-60px;right:-20px}
+    .top-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-box {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: white;
+      letter-spacing: -0.02em;
+    }
+    .testimonial {
+      margin-top: 3.5rem;
+      max-width: 440px;
+    }
+    .stars {
+      color: #fbbf24;
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+    .test-quote {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #e4e4e7;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .test-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #a855f7 0%, #818cf8 100%);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+    .test-author .name {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 0.875rem;
+    }
+    .test-author .title {
+      color: #a1a1aa;
+      font-size: 0.775rem;
+      margin-top: 0.1rem;
+    }
+    .bottom-logo {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .n-icon {
+      width: 28px;
+      height: 28px;
+      background: #18181b;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .glow-1 {
+      position: absolute; top: -10%; left: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .glow-2 {
+      position: absolute; bottom: -10%; left: 30%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
   </style>
 </head>
 <body>
-<div class="check-grid-bg"><div class="check-grid-glow"></div></div>
+<div class="check-grid-bg"><div class="glow-1"></div><div class="glow-2"></div></div>
 <div class="page-wrap">
-  <div class="brand-side" style="justify-content:center">
+  <div class="brand-side">
+    <div class="top-logo">
+      <div class="logo-box">RF</div>
+      <span class="logo-text">RentFlow</span>
+    </div>
+    
     <div class="graphic-wrapper">
       <div class="glass-card-main">
         <div class="gc-header">
@@ -948,6 +1056,22 @@ export class AppService {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#fb923c" stroke="#fb923c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         Maintenance resolved in 2 days
       </div>
+    </div>
+    
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <div class="test-quote">“RentFlow brought everything together. We finally have a single source of truth for our entire portfolio.”</div>
+      <div class="test-author">
+        <div class="avatar">PM</div>
+        <div>
+          <div class="name">Portfolio manager</div>
+          <div class="title">200+ units under management</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-logo">
+      <div class="n-icon">N</div>
     </div>
   </div>
   <div class="form-side">
@@ -1247,7 +1371,7 @@ export class AppService {
     .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.35rem}
     @keyframes spin{to{transform:rotate(360deg)}}
     @media(min-width:768px){.brand-side{display:flex}}
-    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:0 auto}
+    .graphic-wrapper{position:relative;width:100%;max-width:440px;margin:2rem auto}
     .glass-card-main{
       background:rgba(30,30,36,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
       border:1px solid rgba(255,255,255,0.06);border-radius:20px;
@@ -1275,13 +1399,122 @@ export class AppService {
       font-size:.85rem;font-weight:500;color:#e4e4e7;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:3
     }
     .float-pill.left{bottom:-20px;left:-20px}
-    .float-pill.right{bottom:-80px;right:-20px}
+    .float-pill.right{bottom:-60px;right:-20px}
+    .top-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .logo-box {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+      border-radius: 8px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: white;
+      letter-spacing: -0.02em;
+    }
+    .testimonial {
+      margin-top: 3.5rem;
+      max-width: 440px;
+    }
+    .stars {
+      color: #fbbf24;
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+    .test-quote {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #e4e4e7;
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+    .test-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #a855f7 0%, #818cf8 100%);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+    .test-author .name {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 0.875rem;
+    }
+    .test-author .title {
+      color: #a1a1aa;
+      font-size: 0.775rem;
+      margin-top: 0.1rem;
+    }
+    .bottom-logo {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .n-icon {
+      width: 28px;
+      height: 28px;
+      background: #18181b;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .glow-1 {
+      position: absolute; top: -10%; left: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .glow-2 {
+      position: absolute; bottom: -10%; left: 30%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
   </style>
 </head>
 <body>
-<div class="check-grid-bg"><div class="check-grid-glow"></div></div>
+<div class="check-grid-bg"><div class="glow-1"></div><div class="glow-2"></div></div>
 <div class="page-wrap">
-  <div class="brand-side" style="justify-content:center">
+  <div class="brand-side">
+    <div class="top-logo">
+      <div class="logo-box">RF</div>
+      <span class="logo-text">RentFlow</span>
+    </div>
+    
     <div class="graphic-wrapper">
       <div class="glass-card-main">
         <div class="gc-header">
@@ -1313,6 +1546,22 @@ export class AppService {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#fb923c" stroke="#fb923c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         Maintenance resolved in 2 days
       </div>
+    </div>
+    
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <div class="test-quote">“RentFlow brought everything together. We finally have a single source of truth for our entire portfolio.”</div>
+      <div class="test-author">
+        <div class="avatar">PM</div>
+        <div>
+          <div class="name">Portfolio manager</div>
+          <div class="title">200+ units under management</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-logo">
+      <div class="n-icon">N</div>
     </div>
   </div>
   <div class="form-side">
