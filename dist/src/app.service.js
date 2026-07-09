@@ -125,21 +125,54 @@ let AppService = AppService_1 = class AppService {
     html{scroll-behavior:smooth}
     body{
       font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-      background:#faf6f1;color:#18181b;line-height:1.6;
+      background:#07050f;color:#fafafa;line-height:1.6;
       -webkit-font-smoothing:antialiased;
-      scrollbar-width:thin;scrollbar-color:#e2d5c4 transparent
+      scrollbar-width:thin;scrollbar-color:#27272a transparent;
+      min-height:100vh;display:flex;flex-direction:column;
     }
     ::-webkit-scrollbar{width:10px;height:10px}
     ::-webkit-scrollbar-track{background:transparent}
-    ::-webkit-scrollbar-thumb{background:#e2d5c4;border-radius:100px;border:2px solid #faf6f1}
-    ::-webkit-scrollbar-thumb:hover{background:#cbb794}
-    .warm-bg{background:#faf6f1!important}
+    ::-webkit-scrollbar-thumb{background:#27272a;border-radius:100px;border:2px solid #07050f}
+    ::-webkit-scrollbar-thumb:hover{background:#3f3f46}
+
+    /* === BG Layering === */
+    .bg-solid {
+      position: fixed; inset: 0; background-color: #05030a; z-index: 0; pointer-events: none;
+    }
+    .check-grid-bg{
+      position:fixed;inset:0;pointer-events:none;z-index:2;
+      background-image: linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .bg-glow {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    }
+    .glow-1 {
+      position: absolute; top: -10%; left: -20%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+    }
+    .glow-2 {
+      position: absolute; bottom: -10%; right: -10%;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 60%);
+    }
+    .glow-3 {
+      position: absolute; top: 35%; left: 15%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 60%);
+    }
+
+    .page-wrap {
+      position: relative; z-index: 3; display: flex; flex-direction: column; min-height: 100vh;
+    }
 
     /* === Navigation === */
     nav{
       position:fixed;top:0;left:0;right:0;z-index:100;
-      background:rgba(255,255,255,0.8);backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(228,228,231,0.6)
+      background:rgba(7, 5, 15, 0.75);backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255, 255, 255, 0.06)
     }
     nav .inner{
       max-width:1200px;margin:0 auto;
@@ -148,121 +181,116 @@ let AppService = AppService_1 = class AppService {
     }
     nav .brand{
       display:flex;align-items:center;gap:0.625rem;
-      font-weight:650;font-size:1.05rem;color:#18181b;
+      font-weight:650;font-size:1.05rem;color:#ffffff;
       text-decoration:none;letter-spacing:-0.01em
     }
     nav .brand-icon{
       width:30px;height:30px;border-radius:7px;
-      background:#18181b;
+      background:linear-gradient(135deg,#818cf8 0%,#6366f1 100%);
       display:flex;align-items:center;justify-content:center;
-      font-size:0.75rem;font-weight:700;color:white
+      font-size:0.75rem;font-weight:700;color:white;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
     }
     nav .links{display:flex;align-items:center;gap:2rem}
     nav .links a{
-      text-decoration:none;color:#71717a;font-size:0.875rem;font-weight:500;
+      text-decoration:none;color:#a1a1aa;font-size:0.875rem;font-weight:500;
       transition:color .15s;position:relative
     }
     nav .links a::after{
       content:'';position:absolute;bottom:-4px;left:0;right:0;
-      height:1.5px;background:#18181b;border-radius:1px;
+      height:1.5px;background:#6366f1;border-radius:1px;
       transform:scaleX(0);transition:transform .2s
     }
-    nav .links a:hover{color:#18181b}
+    nav .links a:hover{color:#ffffff}
     nav .links a:hover::after{transform:scaleX(1)}
     .nav-btn{
       padding:.4rem .85rem;border-radius:6px;
-      background:#b45309;color:white!important;font-weight:550!important;
-      text-decoration:none;font-size:.82rem;transition:all .15s
+      background:#6366f1;color:white!important;font-weight:550!important;
+      text-decoration:none;font-size:.82rem;transition:all .15s;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
     }
-    .nav-btn:hover{background:#92400e!important;color:white!important}
+    .nav-btn:hover{background:#4f46e5!important;color:white!important;transform:translateY(-1px)}
     .nav-btn::after{display:none!important}
     .status-pill{
       display:inline-flex;align-items:center;gap:.35rem;
       padding:.3rem .7rem;border-radius:100px;
       font-size:.73rem;font-weight:500;
-      background:#f4f4f5;color:#52525b;border:1px solid #e4e4e7
+      background:rgba(255,255,255,0.03);color:#a1a1aa;border:1px solid rgba(255,255,255,0.06)
     }
-    .status-dot{width:5px;height:5px;border-radius:50%;background:#22c55e}
-    .status-pill.degraded .status-dot{background:#eab308}
+    .status-dot{width:5px;height:5px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981}
+    .status-pill.degraded .status-dot{background:#eab308;box-shadow:0 0 8px #eab308}
 
     /* === Hero === */
     .hero{
       padding:9rem 2rem 6rem;text-align:center;
       position:relative;overflow:hidden;
-      background:#ffffff
+      background:transparent;
     }
-    .hero-bg{
-      position:absolute;inset:0;pointer-events:none;
-      background-image:radial-gradient(circle,#e4e4e7 0.5px,transparent 0.5px);
-      background-size:20px 20px;opacity:0.35
+    .hero-tag{
+      display:inline-flex;align-items:center;gap:.375rem;
+      padding:.35rem .75rem;border-radius:100px;
+      font-size:.75rem;font-weight:500;color:#e4e4e7;
+      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+      margin-bottom:2.25rem;position:relative
     }
-    .hero-bg-glow{
-      position:absolute;top:-30%;left:50%;transform:translateX(-50%);
-      width:700px;height:700px;
-      background:radial-gradient(circle,rgba(180,83,9,0.05) 0%,transparent 70%);
-      pointer-events:none
-    }
-    .hero-building{
-      position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-      width:600px;height:120px;pointer-events:none;opacity:.04;
-      background:linear-gradient(180deg,transparent,rgba(180,83,9,.08));
-      mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpath d='M0 200V80l40-30 40 30v120h80V50l60-40 60 40v150h80V30l60-20 60 20v170h80V60l50-35 50 35v140h80V90l40-25 40 25v110h80V120l30-15 30 15v80H0z' fill='%23b45309'/%3E%3C/svg%3E");
-      mask-size:600px 120px;mask-repeat:no-repeat;
-      -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpath d='M0 200V80l40-30 40 30v120h80V50l60-40 60 40v150h80V30l60-20 60 20v170h80V60l50-35 50 35v140h80V90l40-25 40 25v110h80V120l30-15 30 15v80H0z' fill='%23b45309'/%3E%3C/svg%3E");
-      -webkit-mask-size:600px 120px;-webkit-mask-repeat:no-repeat
-    }
+    .hero-tag span{color:#818cf8;font-weight:600}
     .hero h1{
-      font-size:clamp(2.25rem,5vw,3.75rem);
-      font-weight:700;line-height:1.12;
-      letter-spacing:-0.035em;color:#18181b;
-      max-width:780px;margin:0 auto 1.25rem;
+      font-size:clamp(2.5rem,6vw,4rem);
+      font-weight:700;line-height:1.1;
+      letter-spacing:-0.035em;color:#ffffff;
+      max-width:820px;margin:0 auto 1.5rem;
       position:relative
     }
     .hero h1 .accent{
-      color:#b45309
+      background:linear-gradient(135deg,#c084fc 0%,#818cf8 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
     }
     .hero p{
-      font-size:1.125rem;color:#71717a;
-      max-width:540px;margin:0 auto 2.5rem;
+      font-size:1.15rem;color:#a1a1aa;
+      max-width:560px;margin:0 auto 2.75rem;
       line-height:1.7;position:relative
     }
     .hero-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;position:relative}
     .btn{
       display:inline-flex;align-items:center;gap:.5rem;
-      padding:.7rem 1.35rem;border-radius:8px;
+      padding:.75rem 1.5rem;border-radius:8px;
       font-size:.875rem;font-weight:550;text-decoration:none;
       transition:all .15s;cursor:pointer
     }
     .btn-primary{
-      background:#18181b;color:white;
-      box-shadow:0 1px 3px rgba(0,0,0,.08)
+      background:#6366f1;color:white;
+      box-shadow:0 4px 14px rgba(99,102,241,0.3)
     }
     .btn-primary:hover{
-      background:#27272a;transform:translateY(-1px);
-      box-shadow:0 4px 12px rgba(0,0,0,.1)
+      background:#4f46e5;transform:translateY(-1px);
+      box-shadow:0 6px 20px rgba(99,102,241,0.4)
     }
     .btn-secondary{
-      background:#ffffff;color:#18181b;
-      border:1px solid #e4e4e7
+      background:rgba(255,255,255,0.03);color:#ffffff;
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
     }
     .btn-secondary:hover{
-      border-color:#d4d4d8;background:#fafafa
+      background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);transform:translateY(-1px)
     }
     .btn-ghost{
-      background:transparent;color:#71717a;border:none
+      background:transparent;color:#a1a1aa;border:none
     }
     .btn-ghost:hover{
-      color:#18181b;background:#f4f4f5
+      color:#ffffff;background:rgba(255,255,255,0.03)
     }
     .btn:active{transform:scale(.96)!important;transition-duration:.08s}
-    .hero-tag{
-      display:inline-flex;align-items:center;gap:.375rem;
-      padding:.25rem .65rem;border-radius:100px;
-      font-size:.75rem;font-weight:500;color:#52525b;
-      background:#f4f4f5;border:1px solid #e4e4e7;
-      margin-bottom:2rem;position:relative
+    .hero-building{
+      position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+      width:600px;height:120px;pointer-events:none;opacity:.04;
+      background:linear-gradient(180deg,transparent,rgba(99,102,241,.08));
+      mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpath d='M0 200V80l40-30 40 30v120h80V50l60-40 60 40v150h80V30l60-20 60 20v170h80V60l50-35 50 35v140h80V90l40-25 40 25v110h80V120l30-15 30 15v80H0z' fill='%236366f1'/%3E%3C/svg%3E");
+      mask-size:600px 120px;mask-repeat:no-repeat;
+      -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200'%3E%3Cpath d='M0 200V80l40-30 40 30v120h80V50l60-40 60 40v150h80V30l60-20 60 20v170h80V60l50-35 50 35v140h80V90l40-25 40 25v110h80V120l30-15 30 15v80H0z' fill='%236366f1'/%3E%3C/svg%3E");
+      -webkit-mask-size:600px 120px;-webkit-mask-repeat:no-repeat
     }
-    .hero-tag span{color:#b45309}
 
     /* === Metrics Strip === */
     .metrics{
@@ -270,56 +298,62 @@ let AppService = AppService_1 = class AppService {
       position:relative;z-index:10
     }
     .metrics-inner{
-      background:#ffffff;border:1px solid #e4e4e7;
-      border-radius:12px;padding:1.25rem 2rem;
+      background:rgba(255, 255, 255, 0.02);border:1px solid rgba(255, 255, 255, 0.06);
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-radius:16px;padding:1.25rem 2rem;
       display:flex;gap:2.5rem;flex-wrap:wrap;align-items:center;
-      box-shadow:0 1px 3px rgba(0,0,0,.04)
+      box-shadow:0 20px 40px rgba(0,0,0,0.3)
     }
     .metrics-inner .item{display:flex;align-items:center;gap:.5rem}
-    .metrics-inner .label{font-size:.78rem;color:#a1a1aa;font-weight:450}
-    .metrics-inner .value{font-size:.82rem;color:#18181b;font-weight:600}
-    .metrics-inner .divider{width:1px;height:22px;background:#e4e4e7}
+    .metrics-inner .label{font-size:.78rem;color:#71717a;font-weight:450}
+    .metrics-inner .value{font-size:.82rem;color:#ffffff;font-weight:600}
+    .metrics-inner .divider{width:1px;height:22px;background:rgba(255,255,255,0.06)}
 
     /* === Sections === */
-    .section{padding:5rem 2rem}
+    .section{padding:6rem 2rem}
     .section-inner{max-width:1200px;margin:0 auto}
     .section-header{margin-bottom:3.5rem;max-width:640px}
     .section-header.center{text-align:center;margin-left:auto;margin-right:auto}
     .section-header .overline{
-      font-size:.73rem;font-weight:600;text-transform:uppercase;
-      letter-spacing:.06em;color:#b45309;margin-bottom:.75rem
+      font-size:.75rem;font-weight:600;text-transform:uppercase;
+      letter-spacing:.08em;color:#818cf8;margin-bottom:.75rem
     }
     .section-header h2{
-      font-size:clamp(1.5rem,3vw,2.25rem);
-      font-weight:650;line-height:1.2;
-      letter-spacing:-0.025em;color:#18181b
+      font-size:clamp(1.75rem,4vw,2.5rem);
+      font-weight:700;line-height:1.2;
+      letter-spacing:-0.025em;color:#ffffff
     }
     .section-header p{
-      font-size:1rem;color:#71717a;margin-top:.75rem;line-height:1.7
+      font-size:1.05rem;color:#a1a1aa;margin-top:.75rem;line-height:1.7
     }
-    .section-alt{background:#ffffff}
+    .section-alt{background:rgba(255,255,255,0.01)}
 
     /* === Features Showcase === */
     .showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem 4rem}
     .showcase-item{
-      display:flex;gap:1rem;padding:1.5rem;
-      border-radius:10px;transition:all .2s;
-      margin:-1.5rem;padding:1.5rem
+      display:flex;gap:1.25rem;padding:1.75rem;
+      border-radius:16px;transition:all .2s;
+      margin:-1.5rem;background:transparent;
+      border:1px solid transparent;
     }
-    .showcase-item:hover{background:#fafafa}
+    .showcase-item:hover{
+      background:rgba(255,255,255,0.02);
+      border-color:rgba(255,255,255,0.05);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2)
+    }
     .showcase-icon{
-      width:46px;height:46px;border-radius:11px;
+      width:48px;height:48px;border-radius:12px;
       display:flex;align-items:center;justify-content:center;
-      flex-shrink:0;color:#b45309;
-      background:linear-gradient(135deg,#fef3e8,#fde5c8);
-      box-shadow:inset 0 0 0 1px rgba(180,83,9,.12)
+      flex-shrink:0;color:#ffffff;
+      background:linear-gradient(135deg,rgba(99,102,241,0.2) 0%,rgba(168,85,247,0.2) 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(99, 102, 241, 0.15)
     }
     .showcase-text h3{
-      font-size:.95rem;font-weight:600;color:#18181b;
-      margin-bottom:.25rem
+      font-size:1.05rem;font-weight:600;color:#ffffff;
+      margin-bottom:.35rem
     }
     .showcase-text p{
-      font-size:.85rem;color:#71717a;line-height:1.6;
+      font-size:.875rem;color:#a1a1aa;line-height:1.6;
       max-width:400px
     }
 
@@ -330,90 +364,39 @@ let AppService = AppService_1 = class AppService {
       gap:.75rem
     }
     .stat-card{
-      background:#ffffff;border:1px solid #ececef;
-      border-radius:12px;padding:1.5rem 1.25rem;
-      text-align:center;transition:transform .18s,box-shadow .18s,border-color .18s;
-      box-shadow:0 1px 2px rgba(24,24,27,.04)
+      background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      border-radius:16px;padding:1.75rem 1.25rem;
+      text-align:center;transition:all .18s;
+      box-shadow:0 10px 20px rgba(0,0,0,0.15)
     }
     .stat-card:hover{
-      border-color:#d4d4d8;
-      box-shadow:0 10px 24px rgba(24,24,27,.08);
+      border-color:rgba(255,255,255,0.1);
+      box-shadow:0 20px 40px rgba(0,0,0,0.3);
       transform:translateY(-2px)
     }
     .stat-number{
-      font-size:2rem;font-weight:700;color:#18181b;line-height:1;
+      font-size:2.25rem;font-weight:700;color:#ffffff;line-height:1;
       letter-spacing:-0.02em
     }
-    .stat-label{font-size:.78rem;color:#71717a;margin-top:.4rem;font-weight:500}
-    .stat-sub{font-size:.7rem;color:#a1a1aa;margin-top:.2rem}
-    .stat-sub .occupied{color:#16a34a;font-weight:550}
-    .stat-sub .vacant{color:#d97706;font-weight:550}
-
-    /* === Card Grid === */
-    .card-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:.75rem
-    }
-    .card{
-      background:#ffffff;border:1px solid #e4e4e7;
-      border-radius:10px;padding:1.5rem;
-      transition:all .2s
-    }
-    .card:hover{
-      border-color:#d4d4d8;
-      box-shadow:0 2px 8px rgba(0,0,0,.04)
-    }
-    .card-icon{
-      width:36px;height:36px;border-radius:8px;
-      display:flex;align-items:center;justify-content:center;
-      font-size:1rem;margin-bottom:.75rem;
-      border:1px solid #e4e4e7;background:#ffffff
-    }
-    .card-name{font-weight:600;font-size:.9rem;color:#18181b;margin-bottom:.25rem}
-    .card-desc{font-size:.8rem;color:#71717a;line-height:1.55}
-    .card-meta{font-size:.7rem;color:#a1a1aa;margin-top:.5rem}
-
-    /* === Process === */
-    .process-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:3rem;position:relative
-    }
-    .process-grid::before{
-      content:'';position:absolute;top:44px;left:calc(16.66% + 1.5rem);
-      right:calc(16.66% + 1.5rem);height:1px;
-      background:linear-gradient(90deg,#e4e4e7,transparent);
-      z-index:0
-    }
-    .process-step{position:relative}
-    .process-icon{
-      width:48px;height:48px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.1rem;margin-bottom:1rem;
-      background:#ffffff;border:1.5px solid #e4e4e7;
-      position:relative;z-index:1
-    }
-    .process-step h3{
-      font-size:.95rem;font-weight:600;color:#18181b;
-      margin-bottom:.35rem
-    }
-    .process-step p{
-      font-size:.85rem;color:#71717a;line-height:1.6
-    }
+    .stat-label{font-size:.82rem;color:#a1a1aa;margin-top:.5rem;font-weight:500}
+    .stat-sub{font-size:.72rem;color:#71717a;margin-top:.3rem}
+    .stat-sub .occupied{color:#34d399;font-weight:550}
+    .stat-sub .vacant{color:#fb923c;font-weight:550}
 
     /* === Footer === */
     footer{
-      text-align:center;padding:3rem 2rem;
-      border-top:1px solid #e4e4e7;color:#a1a1aa;
-      font-size:.82rem
+      text-align:center;padding:4rem 2rem;
+      border-top:1px solid rgba(255,255,255,0.06);color:#71717a;
+      font-size:.82rem;
+      position:relative;z-index:3;
     }
     footer .f-links{
       display:flex;justify-content:center;gap:2rem;
-      margin-bottom:1rem
+      margin-bottom:1.25rem
     }
-    footer a{color:#71717a;text-decoration:none;transition:color .15s}
-    footer a:hover{color:#18181b}
+    footer a{color:#a1a1aa;text-decoration:none;transition:color .15s}
+    footer a:hover{color:#ffffff}
 
     /* === Animations === */
     .fade-in{
@@ -426,8 +409,6 @@ let AppService = AppService_1 = class AppService {
     /* === Responsive === */
     @media(max-width:900px){
       .showcase-grid{grid-template-columns:1fr;gap:1.5rem}
-      .process-grid{grid-template-columns:1fr;gap:2rem}
-      .process-grid::before{display:none}
     }
     @media(max-width:640px){
       .hero{padding:7rem 1.5rem 4rem}
@@ -440,174 +421,179 @@ let AppService = AppService_1 = class AppService {
   </style>
 </head>
 <body>
-  <nav>
-    <div class="inner">
-      <a href="/" class="brand">
-        <span class="brand-icon">RF</span>
-        RentFlow
-      </a>
-      <div class="links">
+  <div class="bg-solid"></div>
+  <div class="bg-glow">
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+    <div class="glow-3"></div>
+  </div>
+  <div class="check-grid-bg"></div>
+
+  <div class="page-wrap">
+    <nav>
+      <div class="inner">
+        <a href="/" class="brand">
+          <span class="brand-icon">RF</span>
+          RentFlow
+        </a>
+        <div class="links">
+          <a href="#features">Features</a>
+          <a href="#stats">Overview</a>
+          <a href="/login">Sign in</a>
+          <a href="/signup" class="nav-btn">Get started</a>
+          <span class="status-pill${dashboard.status !== 'running' ? ' degraded' : ''}">
+            <span class="status-dot"></span>
+            ${status === 'running' ? 'Online' : 'Issues'}
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-tag">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Live</span> &middot; Platform operational
+      </div>
+      <h1>
+        Your properties deserve<br>
+        <span class="accent">better management.</span>
+      </h1>
+      <p>
+        RentFlow helps landlords and property managers automate leases, track
+        maintenance, collect rent, and keep every unit occupied — all from
+        one dashboard.
+      </p>
+      <div class="hero-actions">
+        <a href="/signup" class="btn btn-primary">
+          Create free account
+        </a>
+        <a href="/login" class="btn btn-secondary">
+          Sign in
+        </a>
+        <a href="#features" class="btn btn-ghost">
+          Explore
+        </a>
+      </div>
+      <div class="hero-building"></div>
+    </section>
+
+    <!-- Metrics -->
+    <div class="metrics">
+      <div class="metrics-inner">
+        <div class="item">
+          <span class="label">Environment</span>
+          <span class="value">${env}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="item">
+          <span class="label">Version</span>
+          <span class="value">v${ver}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="item">
+          <span class="label">Database</span>
+          <span class="value">${db === 'connected' ? 'Connected' : 'Disconnected'}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="item">
+          <span class="label">Uptime</span>
+          <span class="value">${uptimeStr}</span>
+        </div>
+        <div class="divider"></div>
+        <div class="item">
+          <span class="label">Updated</span>
+          <span class="value">${now.toLocaleTimeString()}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Showcase -->
+    <section class="section" id="features">
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="overline">Core platform</div>
+          <h2>Built for landlords, not developers</h2>
+          <p>RentFlow handles the day-to-day work of managing rental properties — leases, maintenance, rent collection, and reporting — so you can focus on growing your portfolio.</p>
+        </div>
+        <div class="showcase-grid">
+          <div class="showcase-item fade-in">
+            <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="showcase-text">
+              <h3>Properties &amp; Buildings</h3>
+              <p>Organize your portfolio with a clear property-to-building-to-unit hierarchy. Each level has its own details, documents, and status tracking.</p>
+            </div>
+          </div>
+          <div class="showcase-item fade-in">
+            <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            <div class="showcase-text">
+              <h3>Tenants &amp; Leases</h3>
+              <p>Digital lease contracts with automated rent schedules, renewal reminders, and late fee calculations. Every tenant has a complete profile.</p>
+            </div>
+          </div>
+          <div class="showcase-item fade-in">
+            <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9.5a2.5 2.5 0 0 0-2.5-2.5h-1a2.5 2.5 0 0 0 0 5h1a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 1-2.5-2.5"/><line x1="12" y1="5" x2="12" y2="19"/></svg></div>
+            <div class="showcase-text">
+              <h3>Rent &amp; Finances</h3>
+              <p>Generate invoices automatically, record payments, track expenses by property, and see your collection rates — all in real time.</p>
+            </div>
+          </div>
+          <div class="showcase-item fade-in">
+            <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+            <div class="showcase-text">
+              <h3>Maintenance &amp; Vendors</h3>
+              <p>Log maintenance requests with priority levels, assign work orders to vendors, and track the full lifecycle from report to completion.</p>
+            </div>
+          </div>
+          <div class="showcase-item fade-in">
+            <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div class="showcase-text">
+              <h3>Reports &amp; Analytics</h3>
+              <p>Live dashboards for occupancy rates, revenue trends, expense breakdowns, and maintenance KPIs — so you always know where things stand.</p>
+            </div>
+          </div>
+          <div class="showcase-item fade-in">
+            <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div class="showcase-text">
+              <h3>Team Access &amp; Roles</h3>
+              <p>Invite your team with role-based permissions. Property managers, accountants, and owners each see exactly what they need — nothing more.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Stats -->
+    ${stats ? `
+    <section class="section section-alt" id="stats">
+      <div class="section-inner">
+        <div class="section-header center">
+          <div class="overline">Live data</div>
+          <h2>Platform overview</h2>
+          <p>Real-time metrics from across your portfolio.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">${stats.companies || 0}</div><div class="stat-label">Companies</div></div>
+          <div class="stat-card"><div class="stat-number">${stats.users || 0}</div><div class="stat-label">Users</div></div>
+          <div class="stat-card"><div class="stat-number">${stats.properties || 0}</div><div class="stat-label">Properties</div></div>
+          <div class="stat-card"><div class="stat-number">${stats.buildings || 0}</div><div class="stat-label">Buildings</div></div>
+          <div class="stat-card"><div class="stat-number">${stats.units ? stats.units.total : 0}</div><div class="stat-label">Units</div><div class="stat-sub"><span class="occupied">${stats.units ? stats.units.occupied : 0} occupied</span> &middot; <span class="vacant">${stats.units ? stats.units.vacant : 0} vacant</span></div></div>
+          <div class="stat-card"><div class="stat-number">${stats.tenants || 0}</div><div class="stat-label">Tenants</div></div>
+          <div class="stat-card"><div class="stat-number">${stats.owners || 0}</div><div class="stat-label">Owners</div></div>
+        </div>
+      </div>
+    </section>` : ''}
+
+    <footer>
+      <div class="f-links">
         <a href="#features">Features</a>
         <a href="#stats">Overview</a>
         <a href="/login">Sign in</a>
-        <a href="/signup" class="nav-btn">Get started</a>
-        <span class="status-pill${dashboard.status !== 'running' ? ' degraded' : ''}">
-          <span class="status-dot"></span>
-          ${status === 'running' ? 'Online' : 'Issues'}
-        </span>
+        <a href="/signup">Get started</a>
       </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-bg-glow"></div>
-    <div class="hero-tag">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <span>Live</span> &middot; Platform operational
-    </div>
-    <h1>
-      Your properties deserve<br>
-      <span class="accent">better management.</span>
-    </h1>
-    <p>
-      RentFlow helps landlords and property managers automate leases, track
-      maintenance, collect rent, and keep every unit occupied — all from
-      one dashboard.
-    </p>
-    <div class="hero-actions">
-      <a href="/signup" class="btn btn-primary">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        Create free account
-      </a>
-      <a href="/login" class="btn btn-secondary">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
-        Sign in
-      </a>
-      <a href="#features" class="btn btn-ghost">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        Explore
-      </a>
-    </div>
-    <div class="hero-building"></div>
-  </section>
-
-  <!-- Metrics -->
-  <div class="metrics">
-    <div class="metrics-inner">
-      <div class="item">
-        <span class="label">Environment</span>
-        <span class="value">${env}</span>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <span class="label">Version</span>
-        <span class="value">v${ver}</span>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <span class="label">Database</span>
-        <span class="value">${db === 'connected' ? 'Connected' : 'Disconnected'}</span>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <span class="label">Uptime</span>
-        <span class="value">${uptimeStr}</span>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <span class="label">Updated</span>
-        <span class="value">${now.toLocaleTimeString()}</span>
-      </div>
-    </div>
+      <div>&copy; ${now.getFullYear()} RentFlow. All rights reserved.</div>
+    </footer>
   </div>
-
-  <!-- Features Showcase -->
-  <section class="section" id="features">
-    <div class="section-inner">
-      <div class="section-header">
-        <div class="overline">Core platform</div>
-        <h2>Built for landlords, not developers</h2>
-        <p>RentFlow handles the day-to-day work of managing rental properties — leases, maintenance, rent collection, and reporting — so you can focus on growing your portfolio.</p>
-      </div>
-      <div class="showcase-grid">
-        <div class="showcase-item fade-in">
-          <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-          <div class="showcase-text">
-            <h3>Properties &amp; Buildings</h3>
-            <p>Organize your portfolio with a clear property-to-building-to-unit hierarchy. Each level has its own details, documents, and status tracking.</p>
-          </div>
-        </div>
-        <div class="showcase-item fade-in">
-          <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <div class="showcase-text">
-            <h3>Tenants &amp; Leases</h3>
-            <p>Digital lease contracts with automated rent schedules, renewal reminders, and late fee calculations. Every tenant has a complete profile.</p>
-          </div>
-        </div>
-        <div class="showcase-item fade-in">
-          <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9.5a2.5 2.5 0 0 0-2.5-2.5h-1a2.5 2.5 0 0 0 0 5h1a2.5 2.5 0 0 1 0 5h-1a2.5 2.5 0 0 1-2.5-2.5"/><line x1="12" y1="5" x2="12" y2="19"/></svg></div>
-          <div class="showcase-text">
-            <h3>Rent &amp; Finances</h3>
-            <p>Generate invoices automatically, record payments, track expenses by property, and see your collection rates — all in real time.</p>
-          </div>
-        </div>
-        <div class="showcase-item fade-in">
-          <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-          <div class="showcase-text">
-            <h3>Maintenance &amp; Vendors</h3>
-            <p>Log maintenance requests with priority levels, assign work orders to vendors, and track the full lifecycle from report to completion.</p>
-          </div>
-        </div>
-        <div class="showcase-item fade-in">
-          <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-          <div class="showcase-text">
-            <h3>Reports &amp; Analytics</h3>
-            <p>Live dashboards for occupancy rates, revenue trends, expense breakdowns, and maintenance KPIs — so you always know where things stand.</p>
-          </div>
-        </div>
-        <div class="showcase-item fade-in">
-          <div class="showcase-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <div class="showcase-text">
-            <h3>Team Access &amp; Roles</h3>
-            <p>Invite your team with role-based permissions. Property managers, accountants, and owners each see exactly what they need — nothing more.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Live Stats -->
-  ${stats ? `
-  <section class="section section-alt" id="stats">
-    <div class="section-inner">
-      <div class="section-header center">
-        <div class="overline">Live data</div>
-        <h2>Platform overview</h2>
-        <p>Real-time metrics from across your portfolio.</p>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number">${stats.companies || 0}</div><div class="stat-label">Companies</div></div>
-        <div class="stat-card"><div class="stat-number">${stats.users || 0}</div><div class="stat-label">Users</div></div>
-        <div class="stat-card"><div class="stat-number">${stats.properties || 0}</div><div class="stat-label">Properties</div></div>
-        <div class="stat-card"><div class="stat-number">${stats.buildings || 0}</div><div class="stat-label">Buildings</div></div>
-        <div class="stat-card"><div class="stat-number">${stats.units ? stats.units.total : 0}</div><div class="stat-label">Units</div><div class="stat-sub"><span class="occupied">${stats.units ? stats.units.occupied : 0} occupied</span> &middot; <span class="vacant">${stats.units ? stats.units.vacant : 0} vacant</span></div></div>
-        <div class="stat-card"><div class="stat-number">${stats.tenants || 0}</div><div class="stat-label">Tenants</div></div>
-        <div class="stat-card"><div class="stat-number">${stats.owners || 0}</div><div class="stat-label">Owners</div></div>
-      </div>
-    </div>
-  </section>` : ''}
-
-  <footer>
-    <div class="f-links">
-      <a href="#features">Features</a>
-      <a href="#stats">Overview</a>
-      <a href="/login">Sign in</a>
-      <a href="/signup">Get started</a>
-    </div>
-    <div>&copy; ${now.getFullYear()} RentFlow. All rights reserved.</div>
-  </footer>
 </body>
 </html>`;
     }
