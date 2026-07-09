@@ -35,18 +35,18 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    // Check if email already exists
-    const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
-    });
-    if (existingUser) {
-      throw new ConflictException('Email already registered');
-    }
-
-    // Hash password
-    const passwordHash = await bcrypt.hash(dto.password, 12);
-
     try {
+      // Check if email already exists
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+      if (existingUser) {
+        throw new ConflictException('Email already registered');
+      }
+
+      // Hash password
+      const passwordHash = await bcrypt.hash(dto.password, 12);
+
       // Create company and user sequentially
       // (We avoid interactive transactions here due to Vercel/adapter-pg serverless issues)
       
