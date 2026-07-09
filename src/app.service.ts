@@ -881,6 +881,30 @@ export class AppService {
     }
     .demo-creds strong{color:#18181b}
     @media(min-width:768px){.brand-side{display:flex}}
+    .glass-card{
+      background:rgba(24,24,27,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,0.08);border-radius:16px;
+      padding:1.5rem;width:100%;max-width:360px;margin-bottom:2rem;
+      box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    .gc-header{font-size:.85rem;font-weight:600;color:#d4d4d8;margin-bottom:1.25rem}
+    .gc-stats{display:flex;justify-content:space-between;margin-bottom:1.5rem}
+    .gc-stat .val{font-size:1.25rem;font-weight:700;color:#fafafa;line-height:1}
+    .gc-stat .lbl{font-size:.75rem;color:#a1a1aa;margin-top:.25rem}
+    .gc-graph{height:60px;width:100%;margin-bottom:1.5rem}
+    .gc-graph svg{width:100%;height:100%}
+    .gc-item{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+    .gc-item:last-child{margin-bottom:0}
+    .gc-icon{
+      width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,0.05);font-size:.8rem;font-weight:700
+    }
+    .gc-icon.green{color:#34d399;background:rgba(52,211,153,0.1)}
+    .gc-icon.red{color:#f87171;background:rgba(248,113,113,0.1)}
+    .g-title{font-size:.8rem;font-weight:500;color:#e4e4e7}
+    .g-sub{font-size:.7rem;color:#71717a}
+    .g-amt{font-size:.85rem;font-weight:600;margin-left:auto;color:#fafafa}
+    .g-amt.green{color:#34d399}
   </style>
 </head>
 <body>
@@ -889,6 +913,32 @@ export class AppService {
   <div class="brand-side">
     <div class="logo">RentFlow</div>
     <div>
+      <div class="glass-card">
+        <div class="gc-header">Portfolio overview</div>
+        <div class="gc-stats">
+          <div class="gc-stat"><div class="val">94%</div><div class="lbl">Occupancy</div></div>
+          <div class="gc-stat"><div class="val">8.2L</div><div class="lbl">Collected</div></div>
+          <div class="gc-stat"><div class="val">212</div><div class="lbl">Units</div></div>
+        </div>
+        <div class="gc-graph">
+          <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+            <path d="M0,40 C20,35 30,10 50,15 C70,20 80,5 100,0 L100,40 L0,40 Z" fill="rgba(99,102,241,0.2)"/>
+            <path d="M0,40 C20,35 30,10 50,15 C70,20 80,5 100,0" fill="none" stroke="#6366f1" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="gc-recent">
+          <div class="gc-item">
+            <div class="gc-icon green">↓</div>
+            <div><div class="g-title">Rent received &middot; Unit 4B</div><div class="g-sub">Today, 10:23 AM</div></div>
+            <div class="g-amt green">+$1,200</div>
+          </div>
+          <div class="gc-item">
+            <div class="gc-icon red">↑</div>
+            <div><div class="g-title">Maintenance &middot; Unit 2A</div><div class="g-sub">Yesterday, 3:45 PM</div></div>
+            <div class="g-amt">-$150</div>
+          </div>
+        </div>
+      </div>
       <div class="quote">"RentFlow brought everything together. We finally have a single source of truth for our entire portfolio."</div>
       <div class="author">— Portfolio manager, 200+ units</div>
     </div>
@@ -1190,6 +1240,30 @@ export class AppService {
     .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear;vertical-align:middle;margin-right:.35rem}
     @keyframes spin{to{transform:rotate(360deg)}}
     @media(min-width:768px){.brand-side{display:flex}}
+    .glass-card{
+      background:rgba(24,24,27,0.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid rgba(255,255,255,0.08);border-radius:16px;
+      padding:1.5rem;width:100%;max-width:360px;margin-bottom:2rem;
+      box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    .gc-header{font-size:.85rem;font-weight:600;color:#d4d4d8;margin-bottom:1.25rem}
+    .gc-stats{display:flex;justify-content:space-between;margin-bottom:1.5rem}
+    .gc-stat .val{font-size:1.25rem;font-weight:700;color:#fafafa;line-height:1}
+    .gc-stat .lbl{font-size:.75rem;color:#a1a1aa;margin-top:.25rem}
+    .gc-graph{height:60px;width:100%;margin-bottom:1.5rem}
+    .gc-graph svg{width:100%;height:100%}
+    .gc-item{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+    .gc-item:last-child{margin-bottom:0}
+    .gc-icon{
+      width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,0.05);font-size:.8rem;font-weight:700
+    }
+    .gc-icon.green{color:#34d399;background:rgba(52,211,153,0.1)}
+    .gc-icon.red{color:#f87171;background:rgba(248,113,113,0.1)}
+    .g-title{font-size:.8rem;font-weight:500;color:#e4e4e7}
+    .g-sub{font-size:.7rem;color:#71717a}
+    .g-amt{font-size:.85rem;font-weight:600;margin-left:auto;color:#fafafa}
+    .g-amt.green{color:#34d399}
   </style>
 </head>
 <body>
