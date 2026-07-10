@@ -14,6 +14,7 @@ import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/errors';
 import type { MaintenanceRequest } from '@/types/api';
 import filterStyles from '@/components/ui/FilterBar.module.css';
+import modalStyles from '@/components/ui/Modal.module.css';
 
 function priorityColor(p: string) {
   if (p === 'URGENT' || p === 'HIGH') return 'red' as const;
@@ -42,7 +43,7 @@ function SubmitRequestModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Submit support / maintenance request" onClose={onClose}>
-      {error && <div style={{ color: '#dc2626', fontSize: '.82rem', marginBottom: '.75rem' }}>{error}</div>}
+      {error && <div className={modalStyles.formError}>{error}</div>}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -62,7 +63,7 @@ function SubmitRequestModal({ onClose }: { onClose: () => void }) {
           <option value="HIGH">High</option>
           <option value="URGENT">Urgent</option>
         </Select>
-        <div style={{ display: 'flex', gap: '.5rem', marginTop: '.5rem' }}>
+        <div className={modalStyles.actions}>
           <Button type="submit" size="sm" loading={mutation.isPending}>
             Submit
           </Button>

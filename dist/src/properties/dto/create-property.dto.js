@@ -9,9 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreatePropertyDto = void 0;
+exports.CreatePropertyDto = exports.PropertyImageDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 const client_1 = require("@prisma/client");
+class PropertyImageDto {
+    url;
+    caption;
+}
+exports.PropertyImageDto = PropertyImageDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(1000),
+    __metadata("design:type", String)
+], PropertyImageDto.prototype, "url", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(300),
+    __metadata("design:type", String)
+], PropertyImageDto.prototype, "caption", void 0);
 class CreatePropertyDto {
     name;
     type;
@@ -115,7 +132,8 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsObject)({ each: true }),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => PropertyImageDto),
     __metadata("design:type", Array)
 ], CreatePropertyDto.prototype, "images", void 0);
 __decorate([

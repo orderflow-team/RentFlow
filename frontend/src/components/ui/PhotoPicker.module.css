@@ -1,0 +1,128 @@
+.field {
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.005em;
+}
+
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1.4rem 1rem;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-muted);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.drop:hover {
+  border-color: var(--brand-400);
+  background: var(--brand-50);
+}
+
+.drop svg {
+  width: 22px;
+  height: 22px;
+  color: var(--brand-500);
+}
+
+.dropText {
+  font-size: 0.82rem;
+  font-weight: 550;
+  color: var(--text-secondary);
+}
+
+.dropHint {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.input {
+  display: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.previewWrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+.previewImg {
+  display: block;
+  width: 100%;
+  height: 76px;
+  object-fit: cover;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(11, 12, 22, 0.65);
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.15s ease;
+}
+
+.removeBtn:hover {
+  background: rgba(220, 38, 38, 0.85);
+}
+
+.addMore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  height: 78px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg-muted);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.addMore:hover {
+  border-color: var(--brand-400);
+  background: var(--brand-50);
+  color: var(--brand-600);
+}
+
+.plus {
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--brand-500);
+}

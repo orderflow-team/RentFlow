@@ -2,6 +2,14 @@ import { getAccessToken, getRefreshToken, setTokens, clearTokens } from './auth-
 import { normalizeApiError } from './errors';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+const API_ORIGIN = API_URL.replace(/\/api\/v\d+\/?$/, '');
+
+/** Resolve a server-relative file path (e.g. /uploads/...) to an absolute URL. */
+export function fileUrl(path?: string | null): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//.test(path)) return path;
+  return `${API_ORIGIN}${path}`;
+}
 
 let refreshPromise: Promise<boolean> | null = null;
 

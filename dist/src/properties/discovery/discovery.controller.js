@@ -37,6 +37,9 @@ let DiscoveryController = class DiscoveryController {
             isAvailableSoon: isAvailableSoon === 'true',
         });
     }
+    async getPropertyDetail(user, id) {
+        return this.service.getPropertyDetail(user.companyId, id);
+    }
     async joinWaitlist(user, id) {
         return this.service.joinWaitlist(user.companyId, id, user.email);
     }
@@ -57,6 +60,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, Number, Number, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], DiscoveryController.prototype, "search", null);
+__decorate([
+    (0, common_1.Get)('properties/:id'),
+    (0, roles_decorator_1.Roles)(role_enum_1.RoleType.ADMIN, role_enum_1.RoleType.MANAGER, role_enum_1.RoleType.OWNER, role_enum_1.RoleType.TENANT),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], DiscoveryController.prototype, "getPropertyDetail", null);
 __decorate([
     (0, common_1.Post)('properties/:id/waitlist'),
     (0, roles_decorator_1.Roles)(role_enum_1.RoleType.TENANT),

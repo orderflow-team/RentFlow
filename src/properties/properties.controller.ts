@@ -8,7 +8,14 @@ import {
   Param,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import { randomUUID } from 'crypto';
 import { PropertiesService } from './properties.service';
 import { PassportService } from './passport/passport.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -24,6 +31,10 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { RoleType } from '../common/enums/role.enum';
 import type { JwtPayload } from '../common/enums/role.enum';
+
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGES_PER_UPLOAD = 12;
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|webp|gif|avif)$/i;
 
 @Controller('properties')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,6 +53,37 @@ export class PropertiesController {
     @Body() dto: CreatePropertyDto,
   ) {
     return this.propertiesService.create(user.companyId, user, dto);
+  }
+
+  @Post('upload-images')
+  @Roles(RoleType.ADMIN, RoleType.MANAGER, RoleType.OWNER)
+  @UseInterceptors(
+    FilesInterceptor('files', MAX_IMAGES_PER_UPLOAD, {
+      storage: diskStorage({
+        destination: join(process.cwd(), 'uploads', 'property-images'),
+        filename: (_req, file, cb) => {
+          cb(null, `${randomUUID()}${extname(file.originalname).toLowerCase()}`);
+        },
+      }),
+      limits: { fileSize: MAX_IMAGE_BYTES },
+      fileFilter: (_req, file, cb) => {
+        if (!IMAGE_EXTENSIONS.test(extname(file.originalname))) {
+          return cb(
+            new BadRequestException(
+              'Only image files are allowed (jpg, png, webp, gif, avif)',
+            ),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+    if (!files?.length) throw new BadRequestException('No files uploaded');
+    return {
+      urls: files.map((f) => `/uploads/property-images/${f.filename}`),
+    };
   }
 
   @Get()

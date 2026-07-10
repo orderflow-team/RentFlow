@@ -33,6 +33,23 @@
   margin-bottom: 1.2rem;
 }
 
+.formError {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--tag-red-text);
+  background: var(--tag-red-bg);
+  border: 1px solid var(--tag-red-border);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius);
+  margin-bottom: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
 @keyframes overlay-in {
   from {
     opacity: 0;

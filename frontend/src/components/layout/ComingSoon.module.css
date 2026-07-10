@@ -1,0 +1,95 @@
+.card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 3.5rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  height: 240px;
+  background: radial-gradient(ellipse, rgba(99, 102, 241, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.orb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  border-radius: 20px;
+  background: var(--brand-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px var(--brand-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  animation: rf-float 6s ease-in-out infinite;
+}
+
+.orb svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-top: 0.4rem;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.35rem;
+  padding: 0.32rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brand-700);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-100);
+}
+
+.pillDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-500);
+  box-shadow: 0 0 8px var(--brand-glow);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}

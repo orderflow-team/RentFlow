@@ -46,6 +46,21 @@
   color: var(--text-primary);
 }
 
+.table a {
+  color: var(--brand-600);
+  font-weight: 550;
+  text-decoration: none;
+}
+
+.table a:hover {
+  text-decoration: underline;
+}
+
+.dangerLink {
+  color: var(--tag-red-text) !important;
+  font-size: 0.8rem;
+}
+
 .table tbody tr {
   transition: background 0.12s ease;
 }

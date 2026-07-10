@@ -43,6 +43,15 @@ export class DiscoveryController {
     });
   }
 
+  @Get('properties/:id')
+  @Roles(RoleType.ADMIN, RoleType.MANAGER, RoleType.OWNER, RoleType.TENANT)
+  async getPropertyDetail(
+    @CurrentUser() user: JwtPayload,
+    @Param('id') id: string,
+  ) {
+    return this.service.getPropertyDetail(user.companyId, id);
+  }
+
   @Post('properties/:id/waitlist')
   @Roles(RoleType.TENANT)
   async joinWaitlist(

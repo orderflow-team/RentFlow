@@ -9,8 +9,21 @@ import {
   MinLength,
   IsArray,
   IsObject,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { PropertyType } from '@prisma/client';
+
+export class PropertyImageDto {
+  @IsString()
+  @MaxLength(1000)
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  caption?: string;
+}
 
 export class CreatePropertyDto {
   @IsString()
@@ -80,8 +93,9 @@ export class CreatePropertyDto {
 
   @IsOptional()
   @IsArray()
-  @IsObject({ each: true })
-  images?: Record<string, any>[];
+  @ValidateNested({ each: true })
+  @Type(() => PropertyImageDto)
+  images?: PropertyImageDto[];
 
   @IsOptional()
   @IsObject()

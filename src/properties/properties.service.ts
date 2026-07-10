@@ -68,16 +68,23 @@ export class PropertiesService {
       finalOwnerId = owner.id;
     }
 
+    // A manager creating a property manages it by default; otherwise the
+    // property would be invisible to them (list is scoped to managerId).
+    let finalManagerId = dto.managerId;
+    if (!finalManagerId && user.roles.includes(RoleType.MANAGER)) {
+      finalManagerId = user.sub;
+    }
+
     const property = await this.prisma.property.create({
       data: {
         ...dto,
         companyId,
         ownerId: finalOwnerId || undefined,
-        managerId: dto.managerId || undefined,
+        managerId: finalManagerId || undefined,
         createdById: user.sub,
         updatedById: user.sub,
         amenities: dto.amenities || undefined,
-        images: dto.images || undefined,
+        images: dto.images?.map((img) => ({ url: img.url, caption: img.caption })) || undefined,
         metadata: dto.metadata || undefined,
       },
       include: {
@@ -212,7 +219,7 @@ export class PropertiesService {
         managerId: dto.managerId !== undefined ? dto.managerId : undefined,
         updatedById: user.sub,
         amenities: dto.amenities !== undefined ? dto.amenities : undefined,
-        images: dto.images !== undefined ? dto.images : undefined,
+        images: dto.images !== undefined ? dto.images.map((img) => ({ url: img.url, caption: img.caption })) : undefined,
         metadata: dto.metadata !== undefined ? dto.metadata : undefined,
       },
       include: {
@@ -458,6 +465,7 @@ export class PropertiesService {
         companyId,
         buildingId,
         amenities: dto.amenities || undefined,
+        images: dto.images?.map((img) => ({ url: img.url, caption: img.caption })) || undefined,
         metadata: dto.metadata || undefined,
       },
     });
@@ -537,6 +545,7 @@ export class PropertiesService {
       data: {
         ...dto,
         amenities: dto.amenities !== undefined ? dto.amenities : undefined,
+        images: dto.images !== undefined ? dto.images.map((img) => ({ url: img.url, caption: img.caption })) : undefined,
         metadata: dto.metadata !== undefined ? dto.metadata : undefined,
       },
     });
@@ -657,6 +666,7 @@ export class PropertiesService {
       rentAmount: unit.rentAmount,
       depositAmount: unit.depositAmount,
       amenities: unit.amenities,
+      images: unit.images || [],
       metadata: unit.metadata,
       createdAt: unit.createdAt,
       updatedAt: unit.updatedAt,

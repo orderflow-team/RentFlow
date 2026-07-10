@@ -44,6 +44,9 @@ export declare class PropertiesController {
         createdAt: any;
         updatedAt: any;
     }>;
+    uploadImages(files: Express.Multer.File[]): Promise<{
+        urls: string[];
+    }>;
     findAll(user: JwtPayload, status?: string, type?: string, search?: string, page?: number, limit?: number): Promise<{
         data: {
             buildingCount: number;
@@ -133,8 +136,8 @@ export declare class PropertiesController {
         };
         history: {
             id: string;
-            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             createdAt: Date;
+            metadata: import("@prisma/client/runtime/client").JsonValue | null;
             description: string;
             propertyId: string;
             eventType: string;
@@ -288,6 +291,7 @@ export declare class PropertiesController {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;
@@ -305,6 +309,7 @@ export declare class PropertiesController {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;
@@ -327,6 +332,7 @@ export declare class PropertiesController {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;
@@ -344,6 +350,7 @@ export declare class PropertiesController {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;

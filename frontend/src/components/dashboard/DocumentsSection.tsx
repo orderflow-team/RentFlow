@@ -13,6 +13,8 @@ import { SectionHeading } from '@/components/layout/PageHeader';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/errors';
 import type { TenantDocument } from '@/types/api';
+import modalStyles from '@/components/ui/Modal.module.css';
+import tableStyles from '@/components/ui/Table.module.css';
 
 function AddDocumentModal({ onClose }: { onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -44,7 +46,7 @@ function AddDocumentModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Add document" onClose={onClose}>
-      {error && <div style={{ color: '#dc2626', fontSize: '.82rem', marginBottom: '.75rem' }}>{error}</div>}
+      {error && <div className={modalStyles.formError}>{error}</div>}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -66,7 +68,7 @@ function AddDocumentModal({ onClose }: { onClose: () => void }) {
           onChange={(e) => setFile(e.target.files?.[0] || null)}
         />
         <Input label="...or paste a link instead" type="url" placeholder="https://..." value={url} onChange={(e) => setUrl(e.target.value)} />
-        <div style={{ display: 'flex', gap: '.5rem', marginTop: '.5rem' }}>
+        <div className={modalStyles.actions}>
           <Button type="submit" size="sm" loading={mutation.isPending}>
             {file ? 'Upload' : 'Add'}
           </Button>
@@ -125,7 +127,7 @@ export function DocumentsSection() {
               <td>
                 <a
                   href="#"
-                  style={{ color: '#dc2626', fontSize: '.8rem' }}
+                  className={tableStyles.dangerLink}
                   onClick={(e) => {
                     e.preventDefault();
                     removeMutation.mutate(d.id);

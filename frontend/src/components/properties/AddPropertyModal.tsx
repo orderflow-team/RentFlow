@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiPost } from '@/lib/api-client';
+import { uploadImages } from '@/lib/upload';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
+import { PhotoPicker } from '@/components/ui/PhotoPicker';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/errors';
+import modalStyles from '@/components/ui/Modal.module.css';
 
 export function AddPropertyModal({ onClose }: { onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -21,11 +24,13 @@ export function AddPropertyModal({ onClose }: { onClose: () => void }) {
   const [type, setType] = useState('APARTMENT_COMPLEX');
   const [yearBuilt, setYearBuilt] = useState('');
   const [description, setDescription] = useState('');
+  const [photos, setPhotos] = useState<File[]>([]);
   const [error, setError] = useState('');
 
   const mutation = useMutation({
-    mutationFn: () =>
-      apiPost('/properties', {
+    mutationFn: async () => {
+      const images = await uploadImages(photos);
+      return apiPost('/properties', {
         name,
         address,
         city,
@@ -34,7 +39,9 @@ export function AddPropertyModal({ onClose }: { onClose: () => void }) {
         type,
         yearBuilt: yearBuilt ? Number(yearBuilt) : undefined,
         description: description || undefined,
-      }),
+        images,
+      });
+    },
     onSuccess: () => {
       toast('Property created', 'success');
       queryClient.invalidateQueries({ queryKey: ['properties'] });
@@ -45,13 +52,20 @@ export function AddPropertyModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Modal title="Add Property" onClose={onClose}>
-      {error && <div style={{ color: '#dc2626', fontSize: '.82rem', marginBottom: '.75rem' }}>{error}</div>}
+      {error && <div className={modalStyles.formError}>{error}</div>}
       <form
         onSubmit={(e) => {
           e.preventDefault();
           mutation.mutate();
         }}
       >
+        <PhotoPicker
+          label="Property photos"
+          hint="Add up to 12 photos so tenants can see the whole property · JPG, PNG, WebP up to 10MB each"
+          photos={photos}
+          onChange={setPhotos}
+          onError={setError}
+        />
         <Input label="Name *" placeholder="Property name" required value={name} onChange={(e) => setName(e.target.value)} />
         <Input label="Address *" placeholder="Street address" required value={address} onChange={(e) => setAddress(e.target.value)} />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '.5rem' }}>
@@ -70,7 +84,7 @@ export function AddPropertyModal({ onClose }: { onClose: () => void }) {
           <Input label="Year Built" type="number" placeholder="e.g. 2020" value={yearBuilt} onChange={(e) => setYearBuilt(e.target.value)} />
         </div>
         <Input label="Description" placeholder="Optional description" value={description} onChange={(e) => setDescription(e.target.value)} />
-        <div style={{ display: 'flex', gap: '.5rem', marginTop: '.5rem' }}>
+        <div className={modalStyles.actions}>
           <Button type="submit" size="sm" loading={mutation.isPending}>
             Create
           </Button>

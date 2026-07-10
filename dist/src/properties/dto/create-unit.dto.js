@@ -11,7 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUnitDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 const client_1 = require("@prisma/client");
+const create_property_dto_1 = require("./create-property.dto");
 class CreateUnitDto {
     name;
     description;
@@ -22,6 +24,7 @@ class CreateUnitDto {
     squareFootage;
     rentAmount;
     depositAmount;
+    images;
     amenities;
     metadata;
 }
@@ -79,6 +82,13 @@ __decorate([
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], CreateUnitDto.prototype, "depositAmount", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => create_property_dto_1.PropertyImageDto),
+    __metadata("design:type", Array)
+], CreateUnitDto.prototype, "images", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsObject)(),

@@ -8,8 +8,12 @@ import {
   MaxLength,
   MinLength,
   IsObject,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { UnitStatus } from '@prisma/client';
+import { PropertyImageDto } from './create-property.dto';
 
 export class CreateUnitDto {
   @IsString()
@@ -55,6 +59,12 @@ export class CreateUnitDto {
   @IsNumber()
   @Min(0)
   depositAmount?: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PropertyImageDto)
+  images?: PropertyImageDto[];
 
   @IsOptional()
   @IsObject()

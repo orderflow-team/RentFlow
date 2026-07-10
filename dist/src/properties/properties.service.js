@@ -58,16 +58,20 @@ let PropertiesService = PropertiesService_1 = class PropertiesService {
             }
             finalOwnerId = owner.id;
         }
+        let finalManagerId = dto.managerId;
+        if (!finalManagerId && user.roles.includes(role_enum_1.RoleType.MANAGER)) {
+            finalManagerId = user.sub;
+        }
         const property = await this.prisma.property.create({
             data: {
                 ...dto,
                 companyId,
                 ownerId: finalOwnerId || undefined,
-                managerId: dto.managerId || undefined,
+                managerId: finalManagerId || undefined,
                 createdById: user.sub,
                 updatedById: user.sub,
                 amenities: dto.amenities || undefined,
-                images: dto.images || undefined,
+                images: dto.images?.map((img) => ({ url: img.url, caption: img.caption })) || undefined,
                 metadata: dto.metadata || undefined,
             },
             include: {
@@ -172,7 +176,7 @@ let PropertiesService = PropertiesService_1 = class PropertiesService {
                 managerId: dto.managerId !== undefined ? dto.managerId : undefined,
                 updatedById: user.sub,
                 amenities: dto.amenities !== undefined ? dto.amenities : undefined,
-                images: dto.images !== undefined ? dto.images : undefined,
+                images: dto.images !== undefined ? dto.images.map((img) => ({ url: img.url, caption: img.caption })) : undefined,
                 metadata: dto.metadata !== undefined ? dto.metadata : undefined,
             },
             include: {
@@ -354,6 +358,7 @@ let PropertiesService = PropertiesService_1 = class PropertiesService {
                 companyId,
                 buildingId,
                 amenities: dto.amenities || undefined,
+                images: dto.images?.map((img) => ({ url: img.url, caption: img.caption })) || undefined,
                 metadata: dto.metadata || undefined,
             },
         });
@@ -413,6 +418,7 @@ let PropertiesService = PropertiesService_1 = class PropertiesService {
             data: {
                 ...dto,
                 amenities: dto.amenities !== undefined ? dto.amenities : undefined,
+                images: dto.images !== undefined ? dto.images.map((img) => ({ url: img.url, caption: img.caption })) : undefined,
                 metadata: dto.metadata !== undefined ? dto.metadata : undefined,
             },
         });
@@ -519,6 +525,7 @@ let PropertiesService = PropertiesService_1 = class PropertiesService {
             rentAmount: unit.rentAmount,
             depositAmount: unit.depositAmount,
             amenities: unit.amenities,
+            images: unit.images || [],
             metadata: unit.metadata,
             createdAt: unit.createdAt,
             updatedAt: unit.updatedAt,

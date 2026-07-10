@@ -1,3 +1,9 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.1rem;
+}
+
 .card {
   display: block;
   background: var(--bg-card);
@@ -15,40 +21,45 @@
   transform: translateY(-3px);
 }
 
-.img {
-  display: block;
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  transition: transform 0.25s ease, filter 0.25s ease;
-}
-
-.card:hover .img {
-  transform: scale(1.04);
-  filter: saturate(1.08);
-}
-
-.imgPlaceholder {
-  height: 120px;
+.imgWrap {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
   background:
     radial-gradient(200px 90px at 85% 15%, rgba(255, 255, 255, 0.35), transparent 70%),
     linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
     linear-gradient(135deg, #6366f1, #8b5cf6 55%, #a855f7);
   background-size: auto, 22px 22px, 22px 22px, auto;
-  position: relative;
-  transition: filter 0.2s ease;
 }
 
-.imgPlaceholder::after {
-  content: '';
+.img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.card:hover .img {
+  transform: scale(1.05);
+}
+
+.photoCount {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 55%, rgba(11, 12, 22, 0.25));
-}
-
-.card:hover .imgPlaceholder {
-  filter: saturate(1.15) brightness(1.05);
+  bottom: 0.55rem;
+  right: 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(11, 12, 22, 0.6);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .body {
@@ -57,7 +68,7 @@
 
 .name {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 0.25rem;
@@ -68,11 +79,26 @@
   color: var(--text-muted);
 }
 
-.meta {
-  font-size: 0.75rem;
+.rent {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--brand-600);
+  font-variant-numeric: tabular-nums;
+}
+
+.rentUnit {
+  font-size: 0.72rem;
+  font-weight: 500;
   color: var(--text-faint);
-  margin-top: 0.65rem;
+}
+
+.meta {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.4rem;
+  margin-top: 0.55rem;
+  font-size: 0.75rem;
+  color: var(--text-faint);
 }

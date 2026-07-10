@@ -353,6 +353,7 @@ model Unit {
   rentAmount    Float?     @default(0)
   depositAmount Float?     @default(0)
   amenities     Json?
+  images        Json?
   metadata      Json?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

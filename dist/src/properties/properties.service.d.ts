@@ -277,6 +277,7 @@ export declare class PropertiesService {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;
@@ -296,6 +297,7 @@ export declare class PropertiesService {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;
@@ -318,6 +320,7 @@ export declare class PropertiesService {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;
@@ -335,6 +338,7 @@ export declare class PropertiesService {
         rentAmount: any;
         depositAmount: any;
         amenities: any;
+        images: any;
         metadata: any;
         createdAt: any;
         updatedAt: any;

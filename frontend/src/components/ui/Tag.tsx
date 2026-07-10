@@ -12,6 +12,7 @@ export function statusTagColor(status: string | undefined): TagColor {
     case 'PAID':
     case 'COMPLETED':
     case 'OCCUPIED':
+    case 'VACANT':
       return 'green';
     case 'PENDING':
     case 'SUBMITTED':

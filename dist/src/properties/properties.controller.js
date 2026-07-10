@@ -14,6 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PropertiesController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
+const crypto_1 = require("crypto");
 const properties_service_1 = require("./properties.service");
 const passport_service_1 = require("./passport/passport.service");
 const create_property_dto_1 = require("./dto/create-property.dto");
@@ -28,6 +32,9 @@ const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 const role_enum_1 = require("../common/enums/role.enum");
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_IMAGES_PER_UPLOAD = 12;
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|webp|gif|avif)$/i;
 let PropertiesController = class PropertiesController {
     propertiesService;
     passportService;
@@ -37,6 +44,13 @@ let PropertiesController = class PropertiesController {
     }
     async create(user, dto) {
         return this.propertiesService.create(user.companyId, user, dto);
+    }
+    async uploadImages(files) {
+        if (!files?.length)
+            throw new common_1.BadRequestException('No files uploaded');
+        return {
+            urls: files.map((f) => `/uploads/property-images/${f.filename}`),
+        };
     }
     async findAll(user, status, type, search, page, limit) {
         return this.propertiesService.findAll(user.companyId, user, {
@@ -105,6 +119,29 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_property_dto_1.CreatePropertyDto]),
     __metadata("design:returntype", Promise)
 ], PropertiesController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('upload-images'),
+    (0, roles_decorator_1.Roles)(role_enum_1.RoleType.ADMIN, role_enum_1.RoleType.MANAGER, role_enum_1.RoleType.OWNER),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files', MAX_IMAGES_PER_UPLOAD, {
+        storage: (0, multer_1.diskStorage)({
+            destination: (0, path_1.join)(process.cwd(), 'uploads', 'property-images'),
+            filename: (_req, file, cb) => {
+                cb(null, `${(0, crypto_1.randomUUID)()}${(0, path_1.extname)(file.originalname).toLowerCase()}`);
+            },
+        }),
+        limits: { fileSize: MAX_IMAGE_BYTES },
+        fileFilter: (_req, file, cb) => {
+            if (!IMAGE_EXTENSIONS.test((0, path_1.extname)(file.originalname))) {
+                return cb(new common_1.BadRequestException('Only image files are allowed (jpg, png, webp, gif, avif)'), false);
+            }
+            cb(null, true);
+        },
+    })),
+    __param(0, (0, common_1.UploadedFiles)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Array]),
+    __metadata("design:returntype", Promise)
+], PropertiesController.prototype, "uploadImages", null);
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(role_enum_1.RoleType.ADMIN, role_enum_1.RoleType.MANAGER, role_enum_1.RoleType.ACCOUNTANT, role_enum_1.RoleType.OWNER),

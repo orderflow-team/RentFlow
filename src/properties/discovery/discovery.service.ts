@@ -99,6 +99,7 @@ export class DiscoveryService {
           zipCode: p.zipCode,
           type: p.type,
           status: p.status,
+          images: (p.images as { url: string; caption?: string }[] | null) || [],
           expectedAvailability: p.expectedAvailability,
           furnishedStatus: p.furnishedStatus,
           occupancyType: p.occupancyType,
@@ -123,6 +124,92 @@ export class DiscoveryService {
         };
       })
       .filter((p) => p !== null);
+  }
+
+  async getPropertyDetail(companyId: string, propertyId: string) {
+    const property = await this.prisma.property.findFirst({
+      where: {
+        id: propertyId,
+        companyId,
+        deletedAt: null,
+        status: { in: [PropertyStatus.ACTIVE, PropertyStatus.AVAILABLE_SOON] },
+      },
+      include: {
+        manager: {
+          select: { id: true, firstName: true, lastName: true, phone: true, email: true },
+        },
+        buildings: {
+          where: { deletedAt: null },
+          include: {
+            units: { where: { deletedAt: null } },
+          },
+        },
+      },
+    });
+
+    if (!property) {
+      throw new NotFoundException('Property not found or not open for discovery');
+    }
+
+    const units = property.buildings.flatMap((b) =>
+      b.units.map((u) => ({ ...u, buildingName: b.name })),
+    );
+    const availableUnits = units.filter(
+      (u) => u.status === 'VACANT' || u.status === 'AVAILABLE_SOON',
+    );
+    const rents = units
+      .map((u) => u.rentAmount || 0)
+      .filter((r) => r > 0);
+
+    return {
+      id: property.id,
+      name: property.name,
+      description: property.description,
+      address: property.address,
+      city: property.city,
+      state: property.state,
+      zipCode: property.zipCode,
+      type: property.type,
+      status: property.status,
+      yearBuilt: property.yearBuilt,
+      expectedAvailability: property.expectedAvailability,
+      furnishedStatus: property.furnishedStatus,
+      occupancyType: property.occupancyType,
+      images: (property.images as { url: string; caption?: string }[] | null) || [],
+      amenities: property.amenities,
+      rentRange: rents.length ? { min: Math.min(...rents), max: Math.max(...rents) } : null,
+      manager: property.manager
+        ? {
+            name: `${property.manager.firstName} ${property.manager.lastName}`,
+            phone: property.manager.phone,
+            email: property.manager.email,
+          }
+        : null,
+      preferences: {
+        family: property.prefFamily,
+        married: property.prefMarried,
+        liveIn: property.prefLiveIn,
+        students: property.prefStudents,
+        professionals: property.prefProfessionals,
+        petFriendly: property.prefPetFriendly,
+        vegetarian: property.prefVegetarian,
+        smokingAllowed: property.prefSmokingAllowed,
+      },
+      totalUnits: units.length,
+      availableUnitsCount: availableUnits.length,
+      availableUnits: availableUnits.map((u) => ({
+        id: u.id,
+        name: u.name,
+        building: u.buildingName,
+        bedrooms: u.bedrooms,
+        bathrooms: u.bathrooms,
+        squareFootage: u.squareFootage,
+        rentAmount: u.rentAmount,
+        status: u.status,
+        description: u.description,
+        images: (u.images as { url: string; caption?: string }[] | null) || [],
+      })),
+    };
   }
 
   async joinWaitlist(companyId: string, propertyId: string, tenantEmail: string) {

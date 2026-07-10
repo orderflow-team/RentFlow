@@ -1,4 +1,8 @@
 import { PropertyType } from '@prisma/client';
+export declare class PropertyImageDto {
+    url: string;
+    caption?: string;
+}
 export declare class CreatePropertyDto {
     name: string;
     type?: PropertyType;
@@ -14,7 +18,7 @@ export declare class CreatePropertyDto {
     latitude?: number;
     longitude?: number;
     amenities?: Record<string, any>;
-    images?: Record<string, any>[];
+    images?: PropertyImageDto[];
     metadata?: Record<string, any>;
     ownerId?: string;
     managerId?: string;

@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/context/AuthContext';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { Card } from '@/components/ui/Card';
+import { ComingSoonCard } from '@/components/layout/ComingSoon';
 
 export function OwnerHome() {
   const { profile } = useAuth();
@@ -11,7 +11,7 @@ export function OwnerHome() {
   return (
     <div>
       <PageHeader title={`Welcome, ${name}.`} subtitle="Your properties and financial overview" />
-      <Card>Owner portal home is coming soon.</Card>
+      <ComingSoonCard note="Owner portal home is coming soon" />
     </div>
   );
 }
