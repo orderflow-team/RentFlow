@@ -72,12 +72,17 @@ function AddUnitModal({ buildingId, buildingName, onClose }: { buildingId: strin
   const [bedrooms, setBedrooms] = useState('1');
   const [bathrooms, setBathrooms] = useState('1');
   const [squareFootage, setSquareFootage] = useState('');
+  const [listingType, setListingType] = useState('RENT');
   const [rentAmount, setRentAmount] = useState('');
   const [depositAmount, setDepositAmount] = useState('');
+  const [salePrice, setSalePrice] = useState('');
   const [status, setStatus] = useState('VACANT');
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState<File[]>([]);
   const [error, setError] = useState('');
+
+  const showRentField = listingType === 'RENT' || listingType === 'BOTH';
+  const showSaleField = listingType === 'SALE' || listingType === 'BOTH';
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -88,8 +93,10 @@ function AddUnitModal({ buildingId, buildingName, onClose }: { buildingId: strin
         bedrooms: bedrooms ? Number(bedrooms) : undefined,
         bathrooms: bathrooms ? Number(bathrooms) : undefined,
         squareFootage: squareFootage ? Number(squareFootage) : undefined,
-        rentAmount: rentAmount ? Number(rentAmount) : undefined,
-        depositAmount: depositAmount ? Number(depositAmount) : undefined,
+        listingType,
+        rentAmount: showRentField && rentAmount ? Number(rentAmount) : undefined,
+        depositAmount: showRentField && depositAmount ? Number(depositAmount) : undefined,
+        salePrice: showSaleField && salePrice ? Number(salePrice) : undefined,
         status,
         description: description || undefined,
         images,
@@ -124,10 +131,20 @@ function AddUnitModal({ buildingId, buildingName, onClose }: { buildingId: strin
           <Input label="Bathrooms" type="number" min={0} value={bathrooms} onChange={(e) => setBathrooms(e.target.value)} />
           <Input label="Area (sq.ft)" type="number" min={0} value={squareFootage} onChange={(e) => setSquareFootage(e.target.value)} />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem' }}>
-          <Input label="Monthly rent (₹)" type="number" min={0} value={rentAmount} onChange={(e) => setRentAmount(e.target.value)} />
-          <Input label="Deposit (₹)" type="number" min={0} value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
-        </div>
+        <Select label="Listing type — owner preference" value={listingType} onChange={(e) => setListingType(e.target.value)}>
+          <option value="RENT">For rent only</option>
+          <option value="SALE">For sale only</option>
+          <option value="BOTH">For rent &amp; sale</option>
+        </Select>
+        {showRentField && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '.5rem' }}>
+            <Input label="Monthly rent (₹)" type="number" min={0} value={rentAmount} onChange={(e) => setRentAmount(e.target.value)} />
+            <Input label="Deposit (₹)" type="number" min={0} value={depositAmount} onChange={(e) => setDepositAmount(e.target.value)} />
+          </div>
+        )}
+        {showSaleField && (
+          <Input label="Sale price (₹)" type="number" min={0} placeholder="e.g. 8500000" value={salePrice} onChange={(e) => setSalePrice(e.target.value)} />
+        )}
         <Select label="Status" value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="VACANT">Vacant — ready to rent</option>
           <option value="AVAILABLE_SOON">Available soon</option>
@@ -144,6 +161,12 @@ function AddUnitModal({ buildingId, buildingName, onClose }: { buildingId: strin
       </form>
     </Modal>
   );
+}
+
+export function ListingBadge({ listingType }: { listingType: string }) {
+  if (listingType === 'SALE') return <span className={styles.listingBadge}>For Sale</span>;
+  if (listingType === 'BOTH') return <span className={styles.listingBadge}>For Rent &amp; Sale</span>;
+  return null;
 }
 
 export function UnitCard({ unit, footer }: { unit: Unit; footer?: React.ReactNode }) {
@@ -175,9 +198,17 @@ export function UnitCard({ unit, footer }: { unit: Unit; footer?: React.ReactNod
           <Tag color={statusTagColor(unit.status)}>{unit.status === 'AVAILABLE_SOON' ? 'SOON' : unit.status}</Tag>
         </div>
         <div className={styles.unitSpecs}>{specs.join(' · ')}</div>
-        <div className={styles.unitRent}>
-          {unit.rentAmount ? formatINR(unit.rentAmount) : 'Rent on request'} <span className={styles.unitRentUnit}>/ month</span>
-        </div>
+        <ListingBadge listingType={unit.listingType} />
+        {(unit.listingType === 'RENT' || unit.listingType === 'BOTH') && (
+          <div className={styles.unitRent}>
+            {unit.rentAmount ? formatINR(unit.rentAmount) : 'Rent on request'} <span className={styles.unitRentUnit}>/ month</span>
+          </div>
+        )}
+        {(unit.listingType === 'SALE' || unit.listingType === 'BOTH') && (
+          <div className={styles.unitRent}>
+            {unit.salePrice ? formatINR(unit.salePrice) : 'Price on request'} <span className={styles.unitRentUnit}>sale price</span>
+          </div>
+        )}
         {footer}
       </div>
       {lightbox && <Lightbox images={images} alt={unit.name} onClose={() => setLightbox(false)} />}

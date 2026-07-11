@@ -46,7 +46,7 @@ export function StaffHome() {
       {invLoading ? (
         <Loading />
       ) : invoices.length ? (
-        <Table headers={['Invoice', 'Amount', 'Status', 'Unit', 'Tenant']}>
+        <Table headers={['Receipt', 'Amount', 'Status', 'Unit', 'Tenant']}>
           {invoices.map((inv) => (
             <tr key={inv.id}>
               <td>{inv.invoiceNumber}</td>

@@ -1,10 +1,10 @@
 import { DiscoveryService } from './discovery.service';
 import type { JwtPayload } from '../../common/enums/role.enum';
-import { PropertyType } from '@prisma/client';
+import { PropertyType, ListingType } from '@prisma/client';
 export declare class DiscoveryController {
     private readonly service;
     constructor(service: DiscoveryService);
-    search(user: JwtPayload, location?: string, minBudget?: number, maxBudget?: number, type?: PropertyType, furnishedStatus?: string, occupancyType?: string, isAvailableSoon?: string): Promise<{
+    search(user: JwtPayload, location?: string, minBudget?: number, maxBudget?: number, type?: PropertyType, furnishedStatus?: string, occupancyType?: string, isAvailableSoon?: string, listingType?: ListingType): Promise<{
         id: string;
         name: string;
         address: string;
@@ -22,7 +22,11 @@ export declare class DiscoveryController {
         occupancyType: string | null;
         rentRange: {
             min: number;
-            max: number | null;
+            max: number;
+        } | null;
+        saleRange: {
+            min: number;
+            max: number;
         } | null;
         manager: {
             name: string;
@@ -63,6 +67,10 @@ export declare class DiscoveryController {
             min: number;
             max: number;
         } | null;
+        saleRange: {
+            min: number;
+            max: number;
+        } | null;
         manager: {
             name: string;
             phone: string | null;
@@ -87,7 +95,9 @@ export declare class DiscoveryController {
             bedrooms: number;
             bathrooms: number;
             squareFootage: number | null;
+            listingType: import("@prisma/client").$Enums.ListingType;
             rentAmount: number | null;
+            salePrice: number | null;
             status: import("@prisma/client").$Enums.UnitStatus;
             description: string | null;
             images: {

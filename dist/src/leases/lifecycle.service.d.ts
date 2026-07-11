@@ -14,6 +14,8 @@ export declare class LifecycleService {
         moveInKycCompleted: boolean;
         moveInPhotosUploaded: boolean;
         moveInKeyHandover: boolean;
+        moveInKeyHandoverAt: Date | null;
+        moveInPhotos: import("@prisma/client/runtime/client").JsonValue | null;
         moveOutInspection: boolean;
         moveOutKeyReturn: boolean;
         moveOutDepositSettlement: boolean;
@@ -41,6 +43,8 @@ export declare class LifecycleService {
         moveInKycCompleted: boolean;
         moveInPhotosUploaded: boolean;
         moveInKeyHandover: boolean;
+        moveInKeyHandoverAt: Date | null;
+        moveInPhotos: import("@prisma/client/runtime/client").JsonValue | null;
         moveOutInspection: boolean;
         moveOutKeyReturn: boolean;
         moveOutDepositSettlement: boolean;

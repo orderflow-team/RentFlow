@@ -22,8 +22,10 @@ class CreateUnitDto {
     bedrooms;
     bathrooms;
     squareFootage;
+    listingType;
     rentAmount;
     depositAmount;
+    salePrice;
     images;
     amenities;
     metadata;
@@ -72,6 +74,11 @@ __decorate([
 ], CreateUnitDto.prototype, "squareFootage", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.ListingType),
+    __metadata("design:type", String)
+], CreateUnitDto.prototype, "listingType", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
@@ -82,6 +89,12 @@ __decorate([
     (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], CreateUnitDto.prototype, "depositAmount", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    __metadata("design:type", Number)
+], CreateUnitDto.prototype, "salePrice", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),

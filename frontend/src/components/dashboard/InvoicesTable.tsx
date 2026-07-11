@@ -23,7 +23,7 @@ export function InvoicesTable() {
 
   return (
     <>
-      <SectionHeading>Invoices / Bills</SectionHeading>
+      <SectionHeading>Receipts / Bills</SectionHeading>
       <div className={filterStyles.bar}>
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="">All Categories</option>
@@ -43,7 +43,7 @@ export function InvoicesTable() {
       {isLoading ? (
         <Loading />
       ) : invoices.length ? (
-        <Table headers={['Invoice', 'Category', 'Total', 'Paid', 'Status', 'Due']}>
+        <Table headers={['Receipt', 'Category', 'Total', 'Paid', 'Status', 'Due']}>
           {invoices.map((inv) => (
             <tr key={inv.id}>
               <td>{inv.invoiceNumber}</td>
@@ -60,7 +60,7 @@ export function InvoicesTable() {
           ))}
         </Table>
       ) : (
-        <EmptyState message="No invoices matching filters." />
+        <EmptyState message="No receipts matching filters." />
       )}
     </>
   );

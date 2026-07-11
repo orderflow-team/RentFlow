@@ -8,27 +8,29 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { EmptyState, Loading } from '@/components/ui/Table';
 import { Tag, statusTagColor } from '@/components/ui/Tag';
 import { formatINR } from '@/lib/currency';
+import { ListingBadge } from '@/components/properties/BuildingsManager';
 import type { DiscoveryProperty } from '@/types/api';
 import filterStyles from '@/components/ui/FilterBar.module.css';
 import styles from './page.module.css';
 
-function rentLabel(p: DiscoveryProperty) {
-  if (!p.rentRange) return 'Rent on request';
-  if (p.rentRange.min === p.rentRange.max) return formatINR(p.rentRange.min);
-  return `${formatINR(p.rentRange.min)} – ${formatINR(p.rentRange.max)}`;
+function priceLabel(range: { min: number; max: number } | null | undefined) {
+  if (!range) return null;
+  return range.min === range.max ? formatINR(range.min) : `${formatINR(range.min)} – ${formatINR(range.max)}`;
 }
 
 export default function ExplorePage() {
   const [location, setLocation] = useState('');
   const [type, setType] = useState('');
+  const [listingType, setListingType] = useState('');
   const [availableSoon, setAvailableSoon] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['discovery', location, type, availableSoon],
+    queryKey: ['discovery', location, type, listingType, availableSoon],
     queryFn: () => {
       const params = new URLSearchParams();
       if (location.trim()) params.set('location', location.trim());
       if (type) params.set('type', type);
+      if (listingType) params.set('listingType', listingType);
       if (availableSoon) params.set('isAvailableSoon', 'true');
       const qs = params.toString();
       return apiGet<DiscoveryProperty[]>(`/discovery/search${qs ? `?${qs}` : ''}`);
@@ -39,7 +41,7 @@ export default function ExplorePage() {
 
   return (
     <div>
-      <PageHeader title="Explore Properties" subtitle="Browse available properties and see every detail before you decide" />
+      <PageHeader title="Explore Properties" subtitle="Browse available flats and see every detail — including photos — before you decide" />
 
       <div className={filterStyles.bar}>
         <input placeholder="Search by city, area, or address..." value={location} onChange={(e) => setLocation(e.target.value)} style={{ minWidth: 240 }} />
@@ -50,6 +52,11 @@ export default function ExplorePage() {
           <option value="MULTI_FAMILY">Multi Family</option>
           <option value="COMMERCIAL">Commercial</option>
           <option value="MIXED_USE">Mixed Use</option>
+        </select>
+        <select value={listingType} onChange={(e) => setListingType(e.target.value)}>
+          <option value="">For rent or sale</option>
+          <option value="RENT">For rent</option>
+          <option value="SALE">For sale</option>
         </select>
         <select value={availableSoon ? 'soon' : ''} onChange={(e) => setAvailableSoon(e.target.value === 'soon')}>
           <option value="">Available now &amp; soon</option>
@@ -80,12 +87,21 @@ export default function ExplorePage() {
                   <p className={styles.address}>
                     {p.address}, {p.city}
                   </p>
-                  <div className={styles.rent}>
-                    {rentLabel(p)} <span className={styles.rentUnit}>/ month</span>
-                  </div>
+                  {p.rentRange && (
+                    <div className={styles.rent}>
+                      {priceLabel(p.rentRange)} <span className={styles.rentUnit}>/ month</span>
+                    </div>
+                  )}
+                  {p.saleRange && (
+                    <div className={styles.rent}>
+                      {priceLabel(p.saleRange)} <span className={styles.rentUnit}>sale price</span>
+                    </div>
+                  )}
+                  {!p.rentRange && !p.saleRange && <div className={styles.rent}>Price on request</div>}
+                  <ListingBadge listingType={p.saleRange && p.rentRange ? 'BOTH' : p.saleRange ? 'SALE' : 'RENT'} />
                   <div className={styles.meta}>
                     <span>
-                      {p.unitsCount} unit{p.unitsCount === 1 ? '' : 's'}
+                      {p.unitsCount} flat{p.unitsCount === 1 ? '' : 's'}
                     </span>
                     <Tag color={statusTagColor(p.status)}>{p.status === 'AVAILABLE_SOON' ? 'AVAILABLE SOON' : p.status}</Tag>
                   </div>

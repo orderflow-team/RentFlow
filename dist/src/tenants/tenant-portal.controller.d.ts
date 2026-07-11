@@ -26,13 +26,16 @@ export declare class TenantPortalController {
             companyId: string;
             description: string | null;
             amenities: import("@prisma/client/runtime/client").JsonValue | null;
+            images: import("@prisma/client/runtime/client").JsonValue | null;
             buildingId: string;
             floorNumber: number | null;
             bedrooms: number;
             bathrooms: number;
             squareFootage: number | null;
+            listingType: import("@prisma/client").$Enums.ListingType;
             rentAmount: number | null;
             depositAmount: number | null;
+            salePrice: number | null;
         };
         leaseLifecycle: {
             id: string;
@@ -44,6 +47,8 @@ export declare class TenantPortalController {
             moveInKycCompleted: boolean;
             moveInPhotosUploaded: boolean;
             moveInKeyHandover: boolean;
+            moveInKeyHandoverAt: Date | null;
+            moveInPhotos: import("@prisma/client/runtime/client").JsonValue | null;
             moveOutInspection: boolean;
             moveOutKeyReturn: boolean;
             moveOutDepositSettlement: boolean;
@@ -111,6 +116,16 @@ export declare class TenantPortalController {
         category: import("@prisma/client").$Enums.InvoiceCategory;
         paidAt: Date | null;
     })[]>;
+    getMoveInPhotos(user: JwtPayload): Promise<{
+        photos: import("@prisma/client/runtime/client").JsonArray;
+        keyHandover: boolean;
+        keyHandoverAt: Date | null;
+    }>;
+    uploadMoveInPhotos(user: JwtPayload, files: Express.Multer.File[]): Promise<{
+        photos: import("@prisma/client/runtime/client").JsonValue;
+        keyHandover: boolean;
+        keyHandoverAt: Date | null;
+    }>;
     getMyMaintenance(user: JwtPayload): Promise<({
         unit: {
             name: string;

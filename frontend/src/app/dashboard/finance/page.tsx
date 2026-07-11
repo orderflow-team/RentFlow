@@ -156,12 +156,12 @@ export default function FinancePage() {
     <div>
       <PageHeader
         title="Finance"
-        subtitle="Invoices, payments, and expenses"
+        subtitle="Receipts, payments, and expenses"
         action={tab === 'expenses' ? <Button size="sm" onClick={() => setExpenseModalOpen(true)}>+ Add expense</Button> : undefined}
       />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-        <StatCard label="Total billed" value={invoicesQuery.isLoading ? '—' : formatINR(totals.billed)} sub="All invoices" />
+        <StatCard label="Total billed" value={invoicesQuery.isLoading ? '—' : formatINR(totals.billed)} sub="All receipts" />
         <StatCard label="Collected" value={invoicesQuery.isLoading ? '—' : formatINR(totals.collected)} sub="Payments received" />
         <StatCard label="Outstanding" value={invoicesQuery.isLoading ? '—' : formatINR(totals.outstanding)} sub="Awaiting payment" />
         <StatCard label="Expenses" value={expensesQuery.isLoading ? '—' : formatINR(totals.expenses)} sub="Total spent" />
@@ -169,7 +169,7 @@ export default function FinancePage() {
 
       <div className={filterStyles.bar}>
         <select value={tab} onChange={(e) => setTab(e.target.value as 'invoices' | 'expenses')}>
-          <option value="invoices">Invoices</option>
+          <option value="invoices">Receipts</option>
           <option value="expenses">Expenses</option>
         </select>
         {tab === 'invoices' && (
@@ -177,9 +177,10 @@ export default function FinancePage() {
             <option value="">All statuses</option>
             <option value="PENDING">Pending</option>
             <option value="PAID">Paid</option>
-            <option value="PARTIALLY_PAID">Partially paid</option>
+            <option value="PARTIAL">Partially paid</option>
             <option value="OVERDUE">Overdue</option>
             <option value="CANCELLED">Cancelled</option>
+            <option value="DRAFT">Draft</option>
           </select>
         )}
       </div>
@@ -188,9 +189,9 @@ export default function FinancePage() {
         (invoicesQuery.isLoading ? (
           <Loading />
         ) : invoicesQuery.isError ? (
-          <EmptyState message="Could not load invoices right now." />
+          <EmptyState message="Could not load receipts right now." />
         ) : invoices.length ? (
-          <Table headers={['Invoice', 'Tenant', 'Flat', 'Total', 'Paid', 'Due date', 'Status', '']}>
+          <Table headers={['Receipt', 'Tenant', 'Flat', 'Total', 'Paid', 'Due date', 'Status', '']}>
             {invoices.map((inv) => {
               const due = Math.max((inv.totalAmount || 0) - (inv.paidAmount || 0), 0);
               return (
@@ -216,7 +217,7 @@ export default function FinancePage() {
             })}
           </Table>
         ) : (
-          <EmptyState message={invoiceStatus ? 'No invoices with this status.' : 'No invoices yet.'} />
+          <EmptyState message={invoiceStatus ? 'No receipts with this status.' : 'No receipts yet.'} />
         ))}
 
       {tab === 'expenses' &&

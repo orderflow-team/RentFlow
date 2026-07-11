@@ -103,13 +103,16 @@ export declare class LeasesService {
             companyId: string;
             description: string | null;
             amenities: import("@prisma/client/runtime/client").JsonValue | null;
+            images: import("@prisma/client/runtime/client").JsonValue | null;
             buildingId: string;
             floorNumber: number | null;
             bedrooms: number;
             bathrooms: number;
             squareFootage: number | null;
+            listingType: import("@prisma/client").$Enums.ListingType;
             rentAmount: number | null;
             depositAmount: number | null;
+            salePrice: number | null;
         };
         tenant: {
             id: string;

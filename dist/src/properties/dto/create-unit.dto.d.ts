@@ -1,4 +1,4 @@
-import { UnitStatus } from '@prisma/client';
+import { UnitStatus, ListingType } from '@prisma/client';
 import { PropertyImageDto } from './create-property.dto';
 export declare class CreateUnitDto {
     name: string;
@@ -8,8 +8,10 @@ export declare class CreateUnitDto {
     bedrooms?: number;
     bathrooms?: number;
     squareFootage?: number;
+    listingType?: ListingType;
     rentAmount?: number;
     depositAmount?: number;
+    salePrice?: number;
     images?: PropertyImageDto[];
     amenities?: Record<string, any>;
     metadata?: Record<string, any>;

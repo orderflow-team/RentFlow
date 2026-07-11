@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import styles from './PhotoPicker.module.css';
 
 const MAX_PHOTOS = 12;
@@ -15,14 +15,12 @@ interface PhotoPickerProps {
 
 /** Multi-image picker with thumbnail previews, per-photo remove, and an add-more tile. */
 export function PhotoPicker({ label, hint, photos, onChange, onError }: PhotoPickerProps) {
-  const [previews, setPreviews] = useState<string[]>([]);
+  const previews = useMemo(() => photos.map((p) => URL.createObjectURL(p)), [photos]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const urls = photos.map((p) => URL.createObjectURL(p));
-    setPreviews(urls);
-    return () => urls.forEach((u) => URL.revokeObjectURL(u));
-  }, [photos]);
+    return () => previews.forEach((u) => URL.revokeObjectURL(u));
+  }, [previews]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);

@@ -1,19 +1,63 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { apiGet, apiPost } from '@/lib/api-client';
+import { apiGet, apiPost, fileUrl } from '@/lib/api-client';
 import { PageHeader, SectionHeading } from '@/components/layout/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Gallery } from '@/components/ui/Gallery';
-import { Table, EmptyState, Loading } from '@/components/ui/Table';
+import { Gallery, Lightbox } from '@/components/ui/Gallery';
+import { EmptyState, Loading } from '@/components/ui/Table';
 import { Tag, statusTagColor } from '@/components/ui/Tag';
 import { useToast } from '@/components/ui/Toast';
 import { formatINR } from '@/lib/currency';
 import { ApiError } from '@/lib/errors';
-import type { DiscoveryPropertyDetail } from '@/types/api';
+import { ListingBadge } from '@/components/properties/BuildingsManager';
+import type { DiscoveryPropertyDetail, DiscoveryUnit } from '@/types/api';
 import styles from './page.module.css';
+
+function UnitExploreCard({ unit }: { unit: DiscoveryUnit }) {
+  const [lightbox, setLightbox] = useState(false);
+  const images = unit.images || [];
+  const cover = fileUrl(images[0]?.url);
+
+  return (
+    <div className={styles.unitCard}>
+      <div className={styles.unitImgWrap} onClick={() => images.length && setLightbox(true)}>
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={cover} alt={unit.name} />
+        ) : (
+          <div className={styles.unitNoPhoto}>Photos coming soon</div>
+        )}
+        {images.length > 0 && <span className={styles.unitPhotoBadge}>📷 {images.length}</span>}
+      </div>
+      <div className={styles.unitBody}>
+        <div className={styles.unitTop}>
+          <span className={styles.unitName}>{unit.name}</span>
+          <Tag color={statusTagColor(unit.status)}>{unit.status === 'AVAILABLE_SOON' ? 'SOON' : unit.status}</Tag>
+        </div>
+        {unit.building && <div className={styles.unitBuilding}>{unit.building}</div>}
+        <div className={styles.unitSpecs}>
+          {unit.bedrooms} bed · {unit.bathrooms} bath{unit.squareFootage ? ` · ${unit.squareFootage} sq.ft` : ''}
+        </div>
+        <ListingBadge listingType={unit.listingType} />
+        {(unit.listingType === 'RENT' || unit.listingType === 'BOTH') && (
+          <div className={styles.unitRent}>
+            {unit.rentAmount ? formatINR(unit.rentAmount) : 'On request'} <span className={styles.unitRentUnit}>/ month</span>
+          </div>
+        )}
+        {(unit.listingType === 'SALE' || unit.listingType === 'BOTH') && (
+          <div className={styles.unitRent}>
+            {unit.salePrice ? formatINR(unit.salePrice) : 'On request'} <span className={styles.unitRentUnit}>sale price</span>
+          </div>
+        )}
+      </div>
+      {lightbox && <Lightbox images={images} alt={unit.name} onClose={() => setLightbox(false)} />}
+    </div>
+  );
+}
 
 const PREF_LABELS: Record<string, string> = {
   family: 'Families',
@@ -120,39 +164,49 @@ export default function ExplorePropertyPage() {
             </>
           )}
 
-          <SectionHeading>Available units</SectionHeading>
+          <SectionHeading>Available flats</SectionHeading>
           {property.availableUnits.length ? (
-            <Table headers={['Unit', 'Building', 'Beds', 'Baths', 'Area', 'Rent / month', 'Status']}>
+            <div className={styles.unitsGrid}>
               {property.availableUnits.map((u) => (
-                <tr key={u.id}>
-                  <td>{u.name}</td>
-                  <td>{u.building || '—'}</td>
-                  <td>{u.bedrooms}</td>
-                  <td>{u.bathrooms}</td>
-                  <td>{u.squareFootage ? `${u.squareFootage} sq.ft` : '—'}</td>
-                  <td>{u.rentAmount ? formatINR(u.rentAmount) : 'On request'}</td>
-                  <td>
-                    <Tag color={statusTagColor(u.status)}>{u.status === 'AVAILABLE_SOON' ? 'AVAILABLE SOON' : u.status}</Tag>
-                  </td>
-                </tr>
+                <UnitExploreCard key={u.id} unit={u} />
               ))}
-            </Table>
+            </div>
           ) : (
-            <EmptyState message="No units are open right now — join the waiting list or contact the manager to be notified." />
+            <EmptyState message="No flats are open right now — join the waiting list or contact the manager to be notified." />
           )}
         </div>
 
         <Card className={styles.sideCard}>
-          <div className={styles.rentValue}>
-            {property.rentRange
-              ? property.rentRange.min === property.rentRange.max
-                ? formatINR(property.rentRange.min)
-                : `${formatINR(property.rentRange.min)} – ${formatINR(property.rentRange.max)}`
-              : 'Rent on request'}
-          </div>
-          <div className={styles.rentSub}>
-            per month · {property.availableUnitsCount} of {property.totalUnits} unit{property.totalUnits === 1 ? '' : 's'} available
-          </div>
+          {property.rentRange && (
+            <>
+              <div className={styles.rentValue}>
+                {property.rentRange.min === property.rentRange.max
+                  ? formatINR(property.rentRange.min)
+                  : `${formatINR(property.rentRange.min)} – ${formatINR(property.rentRange.max)}`}
+              </div>
+              <div className={styles.rentSub}>
+                per month · {property.availableUnitsCount} of {property.totalUnits} flat{property.totalUnits === 1 ? '' : 's'} available
+              </div>
+            </>
+          )}
+          {property.saleRange && (
+            <>
+              <div className={styles.rentValue}>
+                {property.saleRange.min === property.saleRange.max
+                  ? formatINR(property.saleRange.min)
+                  : `${formatINR(property.saleRange.min)} – ${formatINR(property.saleRange.max)}`}
+              </div>
+              <div className={styles.rentSub}>sale price</div>
+            </>
+          )}
+          {!property.rentRange && !property.saleRange && (
+            <>
+              <div className={styles.rentValue}>Price on request</div>
+              <div className={styles.rentSub}>
+                {property.availableUnitsCount} of {property.totalUnits} flat{property.totalUnits === 1 ? '' : 's'} available
+              </div>
+            </>
+          )}
 
           <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '1rem 0' }} />
 

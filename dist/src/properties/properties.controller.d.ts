@@ -288,8 +288,10 @@ export declare class PropertiesController {
         bedrooms: any;
         bathrooms: any;
         squareFootage: any;
+        listingType: any;
         rentAmount: any;
         depositAmount: any;
+        salePrice: any;
         amenities: any;
         images: any;
         metadata: any;
@@ -306,8 +308,10 @@ export declare class PropertiesController {
         bedrooms: any;
         bathrooms: any;
         squareFootage: any;
+        listingType: any;
         rentAmount: any;
         depositAmount: any;
+        salePrice: any;
         amenities: any;
         images: any;
         metadata: any;
@@ -329,8 +333,10 @@ export declare class PropertiesController {
         bedrooms: any;
         bathrooms: any;
         squareFootage: any;
+        listingType: any;
         rentAmount: any;
         depositAmount: any;
+        salePrice: any;
         amenities: any;
         images: any;
         metadata: any;
@@ -347,8 +353,10 @@ export declare class PropertiesController {
         bedrooms: any;
         bathrooms: any;
         squareFootage: any;
+        listingType: any;
         rentAmount: any;
         depositAmount: any;
+        salePrice: any;
         amenities: any;
         images: any;
         metadata: any;

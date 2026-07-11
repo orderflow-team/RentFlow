@@ -1,11 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { fileUrl } from '@/lib/api-client';
 import type { PropertyImage } from '@/types/api';
 import styles from './Gallery.module.css';
 
-/** Full-screen photo viewer with arrow-key navigation and Escape to close. */
+/**
+ * Full-screen photo viewer with arrow-key navigation and Escape to close.
+ * Rendered via a portal to <body> — position:fixed only escapes to the
+ * viewport if it isn't nested inside an ancestor with a `transform`
+ * (e.g. a hover-lift card), which would otherwise trap it.
+ */
 export function Lightbox({
   images,
   alt,
@@ -36,7 +42,7 @@ export function Lightbox({
   if (!count) return null;
   const current = images[index];
 
-  return (
+  return createPortal(
     <div className={styles.lightbox} onClick={onClose}>
       <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close">
         ✕
@@ -69,7 +75,8 @@ export function Lightbox({
         </button>
       )}
       <div className={styles.lightboxCaption}>{current.caption || `${alt} · ${index + 1} of ${count}`}</div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

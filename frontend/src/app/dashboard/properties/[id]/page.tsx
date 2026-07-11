@@ -1,14 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { apiGet } from '@/lib/api-client';
 import { Gallery } from '@/components/ui/Gallery';
 import { BuildingsManager } from '@/components/properties/BuildingsManager';
+import { ChangeManagerModal } from '@/components/properties/ChangeManagerModal';
 import { useAuth } from '@/context/AuthContext';
-import { isStaffRole, isOwnerRole } from '@/lib/roles';
+import { isStaffRole, isOwnerRole, RoleType } from '@/lib/roles';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { Loading } from '@/components/ui/Table';
 import type { Property } from '@/types/api';
 import styles from './page.module.css';
@@ -19,6 +22,8 @@ export default function PropertyDetailPage() {
   const { roles, activeRole } = useAuth();
   const role = activeRole || roles[0];
   const canManage = isStaffRole(role) || isOwnerRole(role);
+  const canSwitchManager = role === RoleType.ADMIN || role === RoleType.OWNER;
+  const [switchManagerOpen, setSwitchManagerOpen] = useState(false);
 
   const { data: property, isLoading } = useQuery({
     queryKey: ['property', id],
@@ -41,7 +46,7 @@ export default function PropertyDetailPage() {
       {property.images && property.images.length > 0 && <Gallery images={property.images} alt={property.name} />}
       <Card className={styles.managerCard}>
         <span className={styles.managerAvatar}>{managerInitials}</span>
-        <div>
+        <div style={{ flex: 1 }}>
           <div className={styles.managerLabel}>Property manager</div>
           <div className={styles.managerName}>
             {property.manager ? (
@@ -54,8 +59,14 @@ export default function PropertyDetailPage() {
             )}
           </div>
         </div>
+        {canSwitchManager && (
+          <Button size="sm" variant="secondary" onClick={() => setSwitchManagerOpen(true)}>
+            Switch manager
+          </Button>
+        )}
       </Card>
       <BuildingsManager propertyId={id} canManage={canManage} />
+      {switchManagerOpen && <ChangeManagerModal propertyId={id} onClose={() => setSwitchManagerOpen(false)} />}
     </div>
   );
 }

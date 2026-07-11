@@ -98,13 +98,16 @@ export declare class LeasesController {
             companyId: string;
             description: string | null;
             amenities: import("@prisma/client/runtime/client").JsonValue | null;
+            images: import("@prisma/client/runtime/client").JsonValue | null;
             buildingId: string;
             floorNumber: number | null;
             bedrooms: number;
             bathrooms: number;
             squareFootage: number | null;
+            listingType: import("@prisma/client").$Enums.ListingType;
             rentAmount: number | null;
             depositAmount: number | null;
+            salePrice: number | null;
         };
         tenant: {
             id: string;
@@ -163,6 +166,8 @@ export declare class LeasesController {
         moveInKycCompleted: boolean;
         moveInPhotosUploaded: boolean;
         moveInKeyHandover: boolean;
+        moveInKeyHandoverAt: Date | null;
+        moveInPhotos: import("@prisma/client/runtime/client").JsonValue | null;
         moveOutInspection: boolean;
         moveOutKeyReturn: boolean;
         moveOutDepositSettlement: boolean;
@@ -190,6 +195,8 @@ export declare class LeasesController {
         moveInKycCompleted: boolean;
         moveInPhotosUploaded: boolean;
         moveInKeyHandover: boolean;
+        moveInKeyHandoverAt: Date | null;
+        moveInPhotos: import("@prisma/client/runtime/client").JsonValue | null;
         moveOutInspection: boolean;
         moveOutKeyReturn: boolean;
         moveOutDepositSettlement: boolean;

@@ -22,13 +22,16 @@ export declare class TenantPortalService {
             companyId: string;
             description: string | null;
             amenities: import("@prisma/client/runtime/client").JsonValue | null;
+            images: import("@prisma/client/runtime/client").JsonValue | null;
             buildingId: string;
             floorNumber: number | null;
             bedrooms: number;
             bathrooms: number;
             squareFootage: number | null;
+            listingType: import("@prisma/client").$Enums.ListingType;
             rentAmount: number | null;
             depositAmount: number | null;
+            salePrice: number | null;
         };
         leaseLifecycle: {
             id: string;
@@ -40,6 +43,8 @@ export declare class TenantPortalService {
             moveInKycCompleted: boolean;
             moveInPhotosUploaded: boolean;
             moveInKeyHandover: boolean;
+            moveInKeyHandoverAt: Date | null;
+            moveInPhotos: import("@prisma/client/runtime/client").JsonValue | null;
             moveOutInspection: boolean;
             moveOutKeyReturn: boolean;
             moveOutDepositSettlement: boolean;
@@ -68,6 +73,17 @@ export declare class TenantPortalService {
         leaseTerms: import("@prisma/client/runtime/client").JsonValue | null;
         renewedFromId: string | null;
         renewedToId: string | null;
+    }>;
+    private getActiveLeaseWithLifecycle;
+    getMoveInPhotos(companyId: string, tenantId: string): Promise<{
+        photos: import("@prisma/client/runtime/client").JsonArray;
+        keyHandover: boolean;
+        keyHandoverAt: Date | null;
+    }>;
+    addMoveInPhotos(companyId: string, tenantId: string, urls: string[]): Promise<{
+        photos: import("@prisma/client/runtime/client").JsonValue;
+        keyHandover: boolean;
+        keyHandoverAt: Date | null;
     }>;
     getMyInvoices(companyId: string, tenantId: string): Promise<({
         payments: {

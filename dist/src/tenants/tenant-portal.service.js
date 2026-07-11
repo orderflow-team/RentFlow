@@ -64,6 +64,38 @@ let TenantPortalService = class TenantPortalService {
             throw new common_1.NotFoundException('No active lease found');
         return lease;
     }
+    async getActiveLeaseWithLifecycle(companyId, tenantId) {
+        const lease = await this.prisma.lease.findFirst({
+            where: { tenantId, companyId, deletedAt: null, status: 'ACTIVE' },
+            include: { leaseLifecycle: true },
+        });
+        if (!lease)
+            throw new common_1.NotFoundException('No active lease found');
+        const lifecycle = lease.leaseLifecycle || (await this.prisma.leaseLifecycle.create({ data: { leaseId: lease.id } }));
+        return { lease, lifecycle };
+    }
+    async getMoveInPhotos(companyId, tenantId) {
+        const { lifecycle } = await this.getActiveLeaseWithLifecycle(companyId, tenantId);
+        return {
+            photos: Array.isArray(lifecycle.moveInPhotos) ? lifecycle.moveInPhotos : [],
+            keyHandover: lifecycle.moveInKeyHandover,
+            keyHandoverAt: lifecycle.moveInKeyHandoverAt,
+        };
+    }
+    async addMoveInPhotos(companyId, tenantId, urls) {
+        const { lifecycle } = await this.getActiveLeaseWithLifecycle(companyId, tenantId);
+        const existing = Array.isArray(lifecycle.moveInPhotos) ? lifecycle.moveInPhotos : [];
+        const photos = [...existing, ...urls.map((url) => ({ url, uploadedAt: new Date().toISOString() }))];
+        const updated = await this.prisma.leaseLifecycle.update({
+            where: { id: lifecycle.id },
+            data: { moveInPhotos: photos, moveInPhotosUploaded: true },
+        });
+        return {
+            photos: updated.moveInPhotos,
+            keyHandover: updated.moveInKeyHandover,
+            keyHandoverAt: updated.moveInKeyHandoverAt,
+        };
+    }
     async getMyInvoices(companyId, tenantId) {
         return this.prisma.invoice.findMany({
             where: { tenantId, companyId, deletedAt: null },

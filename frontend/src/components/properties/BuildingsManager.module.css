@@ -139,6 +139,22 @@
   color: var(--text-muted);
 }
 
+.listingBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+  padding: 0.14rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--brand-700);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-100);
+  width: fit-content;
+}
+
 .unitRent {
   margin-top: 0.45rem;
   font-size: 0.88rem;

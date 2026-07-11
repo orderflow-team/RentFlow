@@ -47,12 +47,19 @@ export interface Paginated<T> {
   meta: { total: number; page: number; limit: number; totalPages: number };
 }
 
+export interface MoveInPhoto {
+  url: string;
+  uploadedAt: string;
+}
+
 export interface LeaseLifecycle {
   moveInAgreementSigned: boolean;
   moveInDepositReceived: boolean;
   moveInKycCompleted: boolean;
   moveInPhotosUploaded: boolean;
   moveInKeyHandover: boolean;
+  moveInKeyHandoverAt?: string | null;
+  moveInPhotos?: MoveInPhoto[] | null;
   moveOutInspection: boolean;
   moveOutKeyReturn: boolean;
   moveOutDepositSettlement: boolean;
@@ -170,8 +177,10 @@ export interface Unit {
   bedrooms: number;
   bathrooms: number;
   squareFootage?: number | null;
+  listingType: string;
   rentAmount?: number | null;
   depositAmount?: number | null;
+  salePrice?: number | null;
   images?: PropertyImage[] | null;
 }
 
@@ -230,6 +239,7 @@ export interface DiscoveryProperty {
   furnishedStatus?: string | null;
   occupancyType?: string | null;
   rentRange?: { min: number; max: number } | null;
+  saleRange?: { min: number; max: number } | null;
   manager?: { name: string; phone: string | null; email?: string | null } | null;
   preferences?: Record<string, boolean | null>;
   unitsCount: number;
@@ -242,7 +252,9 @@ export interface DiscoveryUnit {
   bedrooms: number;
   bathrooms: number;
   squareFootage?: number | null;
+  listingType: string;
   rentAmount?: number | null;
+  salePrice?: number | null;
   status: string;
   description?: string | null;
   images?: PropertyImage[];

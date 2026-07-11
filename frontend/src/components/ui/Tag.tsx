@@ -27,6 +27,8 @@ export function statusTagColor(status: string | undefined): TagColor {
       return 'red';
     case 'IN_PROGRESS':
     case 'ACKNOWLEDGED':
+    case 'PARTIAL':
+    case 'RESERVED':
       return 'blue';
     default:
       return 'gray';

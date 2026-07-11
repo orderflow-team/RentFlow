@@ -26,7 +26,7 @@ let DiscoveryController = class DiscoveryController {
     constructor(service) {
         this.service = service;
     }
-    async search(user, location, minBudget, maxBudget, type, furnishedStatus, occupancyType, isAvailableSoon) {
+    async search(user, location, minBudget, maxBudget, type, furnishedStatus, occupancyType, isAvailableSoon, listingType) {
         return this.service.search(user.companyId, {
             location,
             minBudget: minBudget ? Number(minBudget) : undefined,
@@ -35,6 +35,7 @@ let DiscoveryController = class DiscoveryController {
             furnishedStatus,
             occupancyType,
             isAvailableSoon: isAvailableSoon === 'true',
+            listingType,
         });
     }
     async getPropertyDetail(user, id) {
@@ -56,8 +57,9 @@ __decorate([
     __param(5, (0, common_1.Query)('furnishedStatus')),
     __param(6, (0, common_1.Query)('occupancyType')),
     __param(7, (0, common_1.Query)('isAvailableSoon')),
+    __param(8, (0, common_1.Query)('listingType')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, Number, Number, String, String, String, String]),
+    __metadata("design:paramtypes", [Object, String, Number, Number, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], DiscoveryController.prototype, "search", null);
 __decorate([

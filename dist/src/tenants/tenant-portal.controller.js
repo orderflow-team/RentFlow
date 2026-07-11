@@ -27,6 +27,8 @@ const tenant_portal_service_1 = require("./tenant-portal.service");
 const prisma_service_1 = require("../prisma/prisma.service");
 const role_enum_1 = require("../common/enums/role.enum");
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
+const MAX_MOVE_IN_PHOTOS = 12;
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|webp|gif|avif)$/i;
 let TenantPortalController = class TenantPortalController {
     service;
     prisma;
@@ -50,6 +52,17 @@ let TenantPortalController = class TenantPortalController {
     async getMyInvoices(user) {
         const tenantId = await this.resolveTenantId(user.companyId, user.sub);
         return this.service.getMyInvoices(user.companyId, tenantId);
+    }
+    async getMoveInPhotos(user) {
+        const tenantId = await this.resolveTenantId(user.companyId, user.sub);
+        return this.service.getMoveInPhotos(user.companyId, tenantId);
+    }
+    async uploadMoveInPhotos(user, files) {
+        if (!files?.length)
+            throw new common_1.BadRequestException('No files uploaded');
+        const tenantId = await this.resolveTenantId(user.companyId, user.sub);
+        const urls = files.map((f) => `/uploads/move-in-photos/${f.filename}`);
+        return this.service.addMoveInPhotos(user.companyId, tenantId, urls);
     }
     async getMyMaintenance(user) {
         const tenantId = await this.resolveTenantId(user.companyId, user.sub);
@@ -103,6 +116,39 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TenantPortalController.prototype, "getMyInvoices", null);
+__decorate([
+    (0, common_1.Get)('lease/move-in-photos'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get my move-in photos' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TenantPortalController.prototype, "getMoveInPhotos", null);
+__decorate([
+    (0, common_1.Post)('lease/move-in-photos'),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiOperation)({ summary: 'Upload move-in photos for my active lease' }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files', MAX_MOVE_IN_PHOTOS, {
+        storage: (0, multer_1.diskStorage)({
+            destination: (0, path_1.join)(process.cwd(), 'uploads', 'move-in-photos'),
+            filename: (_req, file, cb) => {
+                cb(null, `${(0, crypto_1.randomUUID)()}${(0, path_1.extname)(file.originalname).toLowerCase()}`);
+            },
+        }),
+        limits: { fileSize: MAX_UPLOAD_BYTES },
+        fileFilter: (_req, file, cb) => {
+            if (!IMAGE_EXTENSIONS.test((0, path_1.extname)(file.originalname))) {
+                return cb(new common_1.BadRequestException('Only image files are allowed (jpg, png, webp, gif, avif)'), false);
+            }
+            cb(null, true);
+        },
+    })),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:returntype", Promise)
+], TenantPortalController.prototype, "uploadMoveInPhotos", null);
 __decorate([
     (0, common_1.Get)('maintenance'),
     (0, swagger_1.ApiOperation)({ summary: 'Get my maintenance requests' }),

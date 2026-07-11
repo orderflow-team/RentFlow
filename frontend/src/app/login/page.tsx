@@ -12,7 +12,6 @@ import styles from '@/components/auth/AuthForm.module.css';
 
 const DEMO_ACCOUNTS = [
   { label: 'Manager', email: 'manager@demo.local' },
-  { label: 'Accountant', email: 'accountant@demo.local' },
   { label: 'Tenant', email: 'tenant@demo.local' },
   { label: 'Owner', email: 'owner@demo.local' },
 ];

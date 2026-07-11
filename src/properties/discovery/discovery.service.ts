@@ -16,6 +16,7 @@ export class DiscoveryService {
       furnishedStatus?: string;
       occupancyType?: string;
       isAvailableSoon?: boolean;
+      listingType?: 'RENT' | 'SALE' | 'BOTH';
     },
   ) {
     const where: any = {
@@ -51,6 +52,21 @@ export class DiscoveryService {
       };
     }
 
+    const unitWhere: any = {
+      deletedAt: null,
+      ...(filters.minBudget || filters.maxBudget
+        ? {
+            rentAmount: {
+              ...(filters.minBudget ? { gte: filters.minBudget } : {}),
+              ...(filters.maxBudget ? { lte: filters.maxBudget } : {}),
+            },
+          }
+        : {}),
+      ...(filters.listingType
+        ? { OR: [{ listingType: filters.listingType }, { listingType: 'BOTH' }] }
+        : {}),
+    };
+
     // Since budget (rentAmount) is actually tracked on the Unit level in this schema:
     // We will query properties matching these criteria and include their units, or filter units.
     const properties = await this.prisma.property.findMany({
@@ -61,34 +77,22 @@ export class DiscoveryService {
         },
         buildings: {
           include: {
-            units: {
-              where: {
-                deletedAt: null,
-                ...(filters.minBudget || filters.maxBudget
-                  ? {
-                      rentAmount: {
-                        ...(filters.minBudget ? { gte: filters.minBudget } : {}),
-                        ...(filters.maxBudget ? { lte: filters.maxBudget } : {}),
-                      },
-                    }
-                  : {}),
-              },
-            },
+            units: { where: unitWhere },
           },
         },
       },
     });
 
-    // Format properties and only return those that have units if budget filter was specified
+    // Format properties and only return those that have units if a unit-level filter was specified
     return properties
       .map((p) => {
         const units = p.buildings.flatMap((b) => b.units);
-        if ((filters.minBudget || filters.maxBudget) && units.length === 0) {
+        if ((filters.minBudget || filters.maxBudget || filters.listingType) && units.length === 0) {
           return null;
         }
 
-        const minRent = units.length > 0 ? Math.min(...units.map((u) => u.rentAmount || 0)) : null;
-        const maxRent = units.length > 0 ? Math.max(...units.map((u) => u.rentAmount || 0)) : null;
+        const rents = units.map((u) => u.rentAmount || 0).filter((r) => r > 0);
+        const sales = units.map((u) => u.salePrice || 0).filter((s) => s > 0);
 
         return {
           id: p.id,
@@ -103,7 +107,8 @@ export class DiscoveryService {
           expectedAvailability: p.expectedAvailability,
           furnishedStatus: p.furnishedStatus,
           occupancyType: p.occupancyType,
-          rentRange: minRent !== null ? { min: minRent, max: maxRent } : null,
+          rentRange: rents.length ? { min: Math.min(...rents), max: Math.max(...rents) } : null,
+          saleRange: sales.length ? { min: Math.min(...sales), max: Math.max(...sales) } : null,
           manager: p.manager
             ? {
                 name: `${p.manager.firstName} ${p.manager.lastName}`,
@@ -157,9 +162,8 @@ export class DiscoveryService {
     const availableUnits = units.filter(
       (u) => u.status === 'VACANT' || u.status === 'AVAILABLE_SOON',
     );
-    const rents = units
-      .map((u) => u.rentAmount || 0)
-      .filter((r) => r > 0);
+    const rents = units.map((u) => u.rentAmount || 0).filter((r) => r > 0);
+    const sales = units.map((u) => u.salePrice || 0).filter((s) => s > 0);
 
     return {
       id: property.id,
@@ -178,6 +182,7 @@ export class DiscoveryService {
       images: (property.images as { url: string; caption?: string }[] | null) || [],
       amenities: property.amenities,
       rentRange: rents.length ? { min: Math.min(...rents), max: Math.max(...rents) } : null,
+      saleRange: sales.length ? { min: Math.min(...sales), max: Math.max(...sales) } : null,
       manager: property.manager
         ? {
             name: `${property.manager.firstName} ${property.manager.lastName}`,
@@ -204,7 +209,9 @@ export class DiscoveryService {
         bedrooms: u.bedrooms,
         bathrooms: u.bathrooms,
         squareFootage: u.squareFootage,
+        listingType: u.listingType,
         rentAmount: u.rentAmount,
+        salePrice: u.salePrice,
         status: u.status,
         description: u.description,
         images: (u.images as { url: string; caption?: string }[] | null) || [],

@@ -62,9 +62,14 @@ export class LifecycleService {
       lease.leaseLifecycle ||
       (await this.prisma.leaseLifecycle.create({ data: { leaseId } }));
 
+    const data: typeof dto & { moveInKeyHandoverAt?: Date } = { ...dto };
+    if (dto.moveInKeyHandover && !currentLifecycle.moveInKeyHandover && !currentLifecycle.moveInKeyHandoverAt) {
+      data.moveInKeyHandoverAt = new Date();
+    }
+
     const updated = await this.prisma.leaseLifecycle.update({
       where: { id: currentLifecycle.id },
-      data: dto,
+      data,
     });
 
     // Check if Move-In was completed just now

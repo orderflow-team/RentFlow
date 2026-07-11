@@ -11,6 +11,7 @@ export declare class DiscoveryService {
         furnishedStatus?: string;
         occupancyType?: string;
         isAvailableSoon?: boolean;
+        listingType?: 'RENT' | 'SALE' | 'BOTH';
     }): Promise<{
         id: string;
         name: string;
@@ -29,7 +30,11 @@ export declare class DiscoveryService {
         occupancyType: string | null;
         rentRange: {
             min: number;
-            max: number | null;
+            max: number;
+        } | null;
+        saleRange: {
+            min: number;
+            max: number;
         } | null;
         manager: {
             name: string;
@@ -70,6 +75,10 @@ export declare class DiscoveryService {
             min: number;
             max: number;
         } | null;
+        saleRange: {
+            min: number;
+            max: number;
+        } | null;
         manager: {
             name: string;
             phone: string | null;
@@ -94,7 +103,9 @@ export declare class DiscoveryService {
             bedrooms: number;
             bathrooms: number;
             squareFootage: number | null;
+            listingType: import("@prisma/client").$Enums.ListingType;
             rentAmount: number | null;
+            salePrice: number | null;
             status: import("@prisma/client").$Enums.UnitStatus;
             description: string | null;
             images: {

@@ -337,6 +337,12 @@ enum UnitStatus {
   AVAILABLE_SOON
 }
 
+enum ListingType {
+  RENT
+  SALE
+  BOTH
+}
+
 model Unit {
   id            String     @id @default(cuid())
   companyId     String
@@ -350,8 +356,10 @@ model Unit {
   bedrooms      Int        @default(0)
   bathrooms     Int        @default(0)
   squareFootage Int?
+  listingType   ListingType @default(RENT)
   rentAmount    Float?     @default(0)
   depositAmount Float?     @default(0)
+  salePrice     Float?
   amenities     Json?
   images        Json?
   metadata      Json?
@@ -699,6 +707,8 @@ model LeaseLifecycle {
   moveInKycCompleted      Boolean   @default(false)
   moveInPhotosUploaded    Boolean   @default(false)
   moveInKeyHandover       Boolean   @default(false)
+  moveInKeyHandoverAt     DateTime?
+  moveInPhotos            Json?
   // Move-Out Checklist
   moveOutInspection       Boolean   @default(false)
   moveOutKeyReturn        Boolean   @default(false)

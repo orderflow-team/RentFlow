@@ -53,9 +53,13 @@ let LifecycleService = class LifecycleService {
             throw new common_1.NotFoundException('Lease not found');
         const currentLifecycle = lease.leaseLifecycle ||
             (await this.prisma.leaseLifecycle.create({ data: { leaseId } }));
+        const data = { ...dto };
+        if (dto.moveInKeyHandover && !currentLifecycle.moveInKeyHandover && !currentLifecycle.moveInKeyHandoverAt) {
+            data.moveInKeyHandoverAt = new Date();
+        }
         const updated = await this.prisma.leaseLifecycle.update({
             where: { id: currentLifecycle.id },
-            data: dto,
+            data,
         });
         const wasMoveInCompleted = !currentLifecycle.moveInKeyHandover &&
             dto.moveInKeyHandover &&

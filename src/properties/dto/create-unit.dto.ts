@@ -12,7 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UnitStatus } from '@prisma/client';
+import { UnitStatus, ListingType } from '@prisma/client';
 import { PropertyImageDto } from './create-property.dto';
 
 export class CreateUnitDto {
@@ -51,6 +51,10 @@ export class CreateUnitDto {
   squareFootage?: number;
 
   @IsOptional()
+  @IsEnum(ListingType)
+  listingType?: ListingType;
+
+  @IsOptional()
   @IsNumber()
   @Min(0)
   rentAmount?: number;
@@ -59,6 +63,11 @@ export class CreateUnitDto {
   @IsNumber()
   @Min(0)
   depositAmount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  salePrice?: number;
 
   @IsOptional()
   @IsArray()

@@ -13,7 +13,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RoleType } from '../../common/enums/role.enum';
 import type { JwtPayload } from '../../common/enums/role.enum';
-import { PropertyType } from '@prisma/client';
+import { PropertyType, ListingType } from '@prisma/client';
 
 @Controller('discovery')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -31,6 +31,7 @@ export class DiscoveryController {
     @Query('furnishedStatus') furnishedStatus?: string,
     @Query('occupancyType') occupancyType?: string,
     @Query('isAvailableSoon') isAvailableSoon?: string,
+    @Query('listingType') listingType?: ListingType,
   ) {
     return this.service.search(user.companyId, {
       location,
@@ -40,6 +41,7 @@ export class DiscoveryController {
       furnishedStatus,
       occupancyType,
       isAvailableSoon: isAvailableSoon === 'true',
+      listingType,
     });
   }
 
